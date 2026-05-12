@@ -30,8 +30,8 @@ async function submit() {
   }
   const payload = {
     startDate: fmt(form.range[0]),
-    endDate:   fmt(form.range[1]),
-    reason:    form.reason || undefined,
+    endDate: fmt(form.range[1]),
+    reason: form.reason || undefined,
   };
   const parsed = createVacationSchema.safeParse(payload);
   if (!parsed.success) {
@@ -42,7 +42,8 @@ async function submit() {
   try {
     await vacationsApi.create(parsed.data);
     toast.success('Request submitted');
-    form.range = null; form.reason = '';
+    form.range = null;
+    form.reason = '';
     emit('created');
   } catch (e) {
     toast.apiError(e, 'Could not submit your request');
@@ -104,7 +105,9 @@ async function submit() {
   border-radius: var(--radius-card);
   padding: 32px;
 }
-.header { margin-bottom: 24px; }
+.header {
+  margin-bottom: 24px;
+}
 .title {
   font-family: var(--font-display);
   font-size: 22px;
@@ -121,8 +124,14 @@ async function submit() {
   margin: 4px 0 0;
 }
 
-.form { display: grid; gap: 16px; }
-.field { display: grid; gap: 6px; }
+.form {
+  display: grid;
+  gap: 16px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
 .lbl {
   font-family: var(--font-body);
   font-size: 11px;
@@ -147,7 +156,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
 }
 :deep(.ce-textarea) {
@@ -170,7 +181,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
 }
 :deep(.p-datepicker-input:focus) {
@@ -189,7 +202,10 @@ async function submit() {
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.01em;
-  transition: background 120ms, transform 120ms, box-shadow 120ms;
+  transition:
+    background 120ms,
+    transform 120ms,
+    box-shadow 120ms;
   cursor: pointer;
   width: 100%;
   justify-content: center;
@@ -198,10 +214,17 @@ async function submit() {
   background: #084643;
   transform: translateY(-1px);
 }
-:deep(.ce-btn-pine:active) { transform: none; }
-:deep(.ce-btn-pine:focus-visible) { box-shadow: var(--ring); outline: none; }
+:deep(.ce-btn-pine:active) {
+  transform: none;
+}
+:deep(.ce-btn-pine:focus-visible) {
+  box-shadow: var(--ring);
+  outline: none;
+}
 
 @media (max-width: 767px) {
-  .card { padding: 20px; }
+  .card {
+    padding: 20px;
+  }
 }
 </style>

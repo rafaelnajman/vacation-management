@@ -15,7 +15,7 @@ const toast = useToast();
 
 const roleOptions = [
   { label: 'Requester (employee)', value: 'Requester' },
-  { label: 'Validator (manager)',  value: 'Validator' },
+  { label: 'Validator (manager)', value: 'Validator' },
 ];
 
 const form = reactive({ name: '', email: '', password: '', role: '' });
@@ -89,7 +89,7 @@ async function submit() {
             :inputProps="{ class: 'ce-input', id: 'password' }"
             :pt="{
               root: { class: 'ce-password-root' },
-              input: { class: 'ce-input' }
+              input: { class: 'ce-input' },
             }"
           />
           <small class="err" v-if="errors.password">{{ errors.password[0] }}</small>
@@ -107,7 +107,7 @@ async function submit() {
             :invalid="!!errors.role"
             :pt="{
               root: { class: 'ce-select' },
-              label: { class: 'ce-select-label' }
+              label: { class: 'ce-select-label' },
             }"
           />
           <small class="err" v-if="errors.role">{{ errors.role[0] }}</small>
@@ -202,7 +202,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
   box-shadow: none;
 }
@@ -233,7 +235,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
   box-shadow: none;
 }
@@ -261,7 +265,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   box-shadow: none;
 }
 
@@ -325,7 +331,10 @@ async function submit() {
   font-size: 14px;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background 120ms, transform 120ms, box-shadow 120ms;
+  transition:
+    background 120ms,
+    transform 120ms,
+    box-shadow 120ms;
   justify-content: center;
 }
 
@@ -359,7 +368,14 @@ async function submit() {
 }
 
 @media (max-width: 767px) {
-  .register-page { padding: 16px; align-items: flex-start; padding-top: 24px; }
-  .card { max-width: 100%; padding: 24px; }
+  .register-page {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+  .card {
+    max-width: 100%;
+    padding: 24px;
+  }
 }
 </style>

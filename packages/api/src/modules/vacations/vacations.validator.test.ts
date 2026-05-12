@@ -71,8 +71,16 @@ describe('GET /api/vacation-requests — filters', () => {
   });
 
   it('filters by requester name (substring, case-insensitive)', async () => {
-    const { user: a } = await makeUser({ name: 'Alice Adams', email: 'alice.adams@example.com', role: 'Requester' });
-    const { user: b } = await makeUser({ name: 'Bob Brown',   email: 'bob.brown@example.com', role: 'Requester' });
+    const { user: a } = await makeUser({
+      name: 'Alice Adams',
+      email: 'alice.adams@example.com',
+      role: 'Requester',
+    });
+    const { user: b } = await makeUser({
+      name: 'Bob Brown',
+      email: 'bob.brown@example.com',
+      role: 'Requester',
+    });
     await makeVacation(a, { startDate: '2099-07-01', endDate: '2099-07-05' });
     await makeVacation(b, { startDate: '2099-07-10', endDate: '2099-07-15' });
     const { token } = await makeUser({ role: 'Validator' });

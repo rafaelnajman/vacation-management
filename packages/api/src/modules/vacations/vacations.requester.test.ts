@@ -60,7 +60,11 @@ describe('POST /api/vacation-requests — overlap detection', () => {
 
   it('rejects overlap with own approved request (409)', async () => {
     const { user, token } = await makeUser({ role: 'Requester' });
-    await makeVacation(user, { startDate: '2099-08-01', endDate: '2099-08-10', status: 'Approved' });
+    await makeVacation(user, {
+      startDate: '2099-08-01',
+      endDate: '2099-08-10',
+      status: 'Approved',
+    });
     const res = await request(app)
       .post('/api/vacation-requests')
       .set('Authorization', `Bearer ${token}`)
@@ -70,7 +74,11 @@ describe('POST /api/vacation-requests — overlap detection', () => {
 
   it('allows overlap with own rejected request', async () => {
     const { user, token } = await makeUser({ role: 'Requester' });
-    await makeVacation(user, { startDate: '2099-09-01', endDate: '2099-09-10', status: 'Rejected' });
+    await makeVacation(user, {
+      startDate: '2099-09-01',
+      endDate: '2099-09-10',
+      status: 'Rejected',
+    });
     const res = await request(app)
       .post('/api/vacation-requests')
       .set('Authorization', `Bearer ${token}`)
@@ -80,7 +88,11 @@ describe('POST /api/vacation-requests — overlap detection', () => {
 
   it("does not block on another user's overlapping request", async () => {
     const { user: other } = await makeUser({ role: 'Requester', email: 'other@example.com' });
-    await makeVacation(other, { startDate: '2099-10-01', endDate: '2099-10-10', status: 'Pending' });
+    await makeVacation(other, {
+      startDate: '2099-10-01',
+      endDate: '2099-10-10',
+      status: 'Pending',
+    });
 
     const { token } = await makeUser({ role: 'Requester', email: 'self@example.com' });
     const res = await request(app)
@@ -124,12 +136,14 @@ describe('GET /api/vacation-requests/:id (requester)', () => {
   });
 });
 
-describe("PATCH /api/vacation-requests/:id (edit)", () => {
+describe('PATCH /api/vacation-requests/:id (edit)', () => {
   it("updates start/end/reason on the caller's own pending request", async () => {
     const { user, token } = await makeUser({ role: 'Requester' });
     const v = await makeVacation(user, {
-      startDate: '2099-07-01', endDate: '2099-07-05',
-      reason: 'old reason', status: 'Pending',
+      startDate: '2099-07-01',
+      endDate: '2099-07-05',
+      reason: 'old reason',
+      status: 'Pending',
     });
     const res = await request(app)
       .patch(`/api/vacation-requests/${v.id}`)
@@ -168,12 +182,14 @@ describe("PATCH /api/vacation-requests/:id (edit)", () => {
     // Editing a request to extend it shouldn't fail an overlap check against itself
     const { user, token } = await makeUser({ role: 'Requester' });
     const v = await makeVacation(user, {
-      startDate: '2099-08-01', endDate: '2099-08-05', status: 'Pending',
+      startDate: '2099-08-01',
+      endDate: '2099-08-05',
+      status: 'Pending',
     });
     const res = await request(app)
       .patch(`/api/vacation-requests/${v.id}`)
       .set('Authorization', `Bearer ${token}`)
-      .send({ endDate: '2099-08-08' });  // extends, overlaps with itself
+      .send({ endDate: '2099-08-08' }); // extends, overlaps with itself
     expect(res.status).toBe(200);
     expect(res.body.endDate).toBe('2099-08-08');
   });
@@ -181,11 +197,15 @@ describe("PATCH /api/vacation-requests/:id (edit)", () => {
   it('overlap check still catches overlap with OTHER own requests', async () => {
     const { user, token } = await makeUser({ role: 'Requester' });
     await makeVacation(user, { startDate: '2099-09-01', endDate: '2099-09-10', status: 'Pending' });
-    const target = await makeVacation(user, { startDate: '2099-10-01', endDate: '2099-10-05', status: 'Pending' });
+    const target = await makeVacation(user, {
+      startDate: '2099-10-01',
+      endDate: '2099-10-05',
+      status: 'Pending',
+    });
     const res = await request(app)
       .patch(`/api/vacation-requests/${target.id}`)
       .set('Authorization', `Bearer ${token}`)
-      .send({ startDate: '2099-09-05', endDate: '2099-09-12' });  // overlaps with the first
+      .send({ startDate: '2099-09-05', endDate: '2099-09-12' }); // overlaps with the first
     expect(res.status).toBe(409);
     expect(res.body.code).toBe('OVERLAP');
   });
@@ -227,11 +247,14 @@ describe('POST /api/vacation-requests/:id/cancel', () => {
 
 describe('GET /api/vacation-requests/me', () => {
   it("returns only the caller's requests", async () => {
-    const { user: alice, token: aliceToken } = await makeUser({ email: 'alice@example.com', role: 'Requester' });
+    const { user: alice, token: aliceToken } = await makeUser({
+      email: 'alice@example.com',
+      role: 'Requester',
+    });
     const { user: bob } = await makeUser({ email: 'bob@example.com', role: 'Requester' });
     await makeVacation(alice, { startDate: '2099-01-01', endDate: '2099-01-05' });
     await makeVacation(alice, { startDate: '2099-02-01', endDate: '2099-02-05' });
-    await makeVacation(bob,   { startDate: '2099-01-01', endDate: '2099-01-05' });
+    await makeVacation(bob, { startDate: '2099-01-01', endDate: '2099-01-05' });
 
     const res = await request(app)
       .get('/api/vacation-requests/me')

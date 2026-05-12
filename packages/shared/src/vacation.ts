@@ -27,19 +27,19 @@ export type DecideVacationDTO = z.infer<typeof decideVacationSchema>;
 export const updateVacationSchema = z
   .object({
     startDate: isoDate.optional(),
-    endDate:   isoDate.optional(),
-    reason:    z.string().trim().max(1000).nullable().optional(),
+    endDate: isoDate.optional(),
+    reason: z.string().trim().max(1000).nullable().optional(),
   })
-  .refine(
-    d => !(d.startDate && d.endDate) || d.endDate >= d.startDate,
-    { path: ['endDate'], message: 'endDate must be on or after startDate' },
-  );
+  .refine(d => !(d.startDate && d.endDate) || d.endDate >= d.startDate, {
+    path: ['endDate'],
+    message: 'endDate must be on or after startDate',
+  });
 export type UpdateVacationDTO = z.infer<typeof updateVacationSchema>;
 
 export const listVacationsQuerySchema = z.object({
   status: vacationStatusSchema.optional(),
   requesterId: z.string().uuid().optional(),
-  requester:   z.string().trim().min(1).max(254).optional(),
+  requester: z.string().trim().min(1).max(254).optional(),
   from: isoDate.optional(),
   to: isoDate.optional(),
   page: z.coerce.number().int().min(1).default(1),

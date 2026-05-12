@@ -1,8 +1,14 @@
 @use 'tokens' as *;
 
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body, #app {
+html,
+body,
+#app {
   margin: 0;
   min-height: 100vh;
   background: var(--surface-page);
@@ -15,8 +21,9 @@ html, body, #app {
 }
 
 body::before {
-  content: "";
-  position: fixed; inset: 0;
+  content: '';
+  position: fixed;
+  inset: 0;
   pointer-events: none;
   background-image: radial-gradient(circle, rgba(10, 14, 20, 0.06) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -25,31 +32,74 @@ body::before {
   opacity: 0.4;
 }
 
-h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.015em; }
-h1 { font-size: 44px; line-height: 1.05; }
-h2 { font-size: 28px; line-height: 1.1; }
-h3 { font-size: 18px; line-height: 1.2; }
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+h1 {
+  font-size: 44px;
+  line-height: 1.05;
+}
+h2 {
+  font-size: 28px;
+  line-height: 1.1;
+}
+h3 {
+  font-size: 18px;
+  line-height: 1.2;
+}
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { color: var(--accent-hover); }
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-hover);
+}
 
-button { font-family: var(--font-body); }
+button {
+  font-family: var(--font-body);
+}
 
 // Reusable rise animation (used by .rise siblings on page load)
-.rise { animation: rise 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.rise:nth-child(1) { animation-delay: 0ms; }
-.rise:nth-child(2) { animation-delay: 60ms; }
-.rise:nth-child(3) { animation-delay: 120ms; }
-.rise:nth-child(4) { animation-delay: 180ms; }
-.rise:nth-child(5) { animation-delay: 240ms; }
-.rise:nth-child(6) { animation-delay: 300ms; }
+.rise {
+  animation: rise 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.rise:nth-child(1) {
+  animation-delay: 0ms;
+}
+.rise:nth-child(2) {
+  animation-delay: 60ms;
+}
+.rise:nth-child(3) {
+  animation-delay: 120ms;
+}
+.rise:nth-child(4) {
+  animation-delay: 180ms;
+}
+.rise:nth-child(5) {
+  animation-delay: 240ms;
+}
+.rise:nth-child(6) {
+  animation-delay: 300ms;
+}
 @keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
@@ -57,18 +107,30 @@ button { font-family: var(--font-body); }
 
 // Mobile-touch-target normalization
 @media (max-width: 767px) {
-  button, [role="button"], a.nav-item {
+  button,
+  [role='button'],
+  a.nav-item {
     min-height: 44px;
   }
   // Prevent horizontal overflow from rogue children
-  html, body, #app { overflow-x: hidden; }
+  html,
+  body,
+  #app {
+    overflow-x: hidden;
+  }
 }
 
 // Reduce h1/h2 type scale on small viewports
 @media (max-width: 767px) {
-  h1 { font-size: 32px; }
-  h2 { font-size: 22px; }
-  h3 { font-size: 16px; }
+  h1 {
+    font-size: 32px;
+  }
+  h2 {
+    font-size: 22px;
+  }
+  h3 {
+    font-size: 16px;
+  }
 }
 
 // Card registration marks — quiet print-marks reference
@@ -76,7 +138,7 @@ button { font-family: var(--font-body); }
   position: relative;
 }
 .card::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 8px;
   left: 8px;

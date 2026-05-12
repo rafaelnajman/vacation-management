@@ -42,7 +42,9 @@ function fmt(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-function close() { emit('update:visible', false); }
+function close() {
+  emit('update:visible', false);
+}
 
 async function submit() {
   if (!props.request) return;
@@ -53,8 +55,8 @@ async function submit() {
   }
   const payload = {
     startDate: fmt(form.range[0]),
-    endDate:   fmt(form.range[1]),
-    reason:    form.reason || undefined,
+    endDate: fmt(form.range[1]),
+    reason: form.reason || undefined,
   };
   const parsed = updateVacationSchema.safeParse(payload);
   if (!parsed.success) {
@@ -82,35 +84,51 @@ async function submit() {
     header="Edit request"
     :style="{ width: 'min(460px, calc(100vw - 32px))' }"
     :pt="{
-      root:    { class: 'ce-dialog' },
-      header:  { class: 'ce-dialog-header' },
-      title:   { class: 'ce-dialog-title' },
+      root: { class: 'ce-dialog' },
+      header: { class: 'ce-dialog-header' },
+      title: { class: 'ce-dialog-title' },
       content: { class: 'ce-dialog-content' },
-      mask:    { class: 'ce-dialog-mask' },
+      mask: { class: 'ce-dialog-mask' },
     }"
     @update:visible="emit('update:visible', $event)"
   >
     <form @submit.prevent="submit" class="form">
       <div class="field">
         <label class="lbl">Dates</label>
-        <DatePicker v-model="form.range" selectionMode="range" :minDate="new Date()"
-                    dateFormat="yy-mm-dd" :manualInput="false" showIcon
-                    :pt="{ pcInput: { root: { class: 'ce-input' } } }" />
+        <DatePicker
+          v-model="form.range"
+          selectionMode="range"
+          :minDate="new Date()"
+          dateFormat="yy-mm-dd"
+          :manualInput="false"
+          showIcon
+          :pt="{ pcInput: { root: { class: 'ce-input' } } }"
+        />
         <small class="err" v-if="errors.range">{{ errors.range[0] }}</small>
         <small class="err" v-if="errors.endDate">{{ errors.endDate[0] }}</small>
       </div>
 
       <div class="field">
         <label class="lbl">Reason (optional)</label>
-        <Textarea v-model="form.reason" rows="3" autoResize maxlength="1000"
-                  :pt="{ root: { class: 'ce-input ce-textarea' } }" />
+        <Textarea
+          v-model="form.reason"
+          rows="3"
+          autoResize
+          maxlength="1000"
+          :pt="{ root: { class: 'ce-input ce-textarea' } }"
+        />
         <small class="err" v-if="errors.reason">{{ errors.reason[0] }}</small>
       </div>
     </form>
 
     <template #footer>
       <Button text label="Cancel" @click="close" :pt="{ root: { class: 'ce-btn-ghost' } }" />
-      <Button label="Save changes" @click="submit" :loading="submitting" :pt="{ root: { class: 'ce-btn-primary' } }" />
+      <Button
+        label="Save changes"
+        @click="submit"
+        :loading="submitting"
+        :pt="{ root: { class: 'ce-btn-primary' } }"
+      />
     </template>
   </Dialog>
 </template>
@@ -142,13 +160,27 @@ async function submit() {
   background: rgba(10, 14, 20, 0.55);
 }
 
-.form { display: grid; gap: 16px; padding-top: 16px; }
-.field { display: grid; gap: 6px; }
-.lbl {
-  font-family: var(--font-body); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-secondary);
+.form {
+  display: grid;
+  gap: 16px;
+  padding-top: 16px;
 }
-.err { font-size: 12px; color: var(--status-rejected); }
+.field {
+  display: grid;
+  gap: 6px;
+}
+.lbl {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.err {
+  font-size: 12px;
+  color: var(--status-rejected);
+}
 
 :deep(.ce-input),
 :deep(.ce-input input),
@@ -161,14 +193,19 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
 }
-:deep(.ce-textarea) { padding: 0; }
+:deep(.ce-textarea) {
+  padding: 0;
+}
 :deep(.ce-input:focus-within),
 :deep(.ce-input input:focus),
 :deep(.ce-input textarea:focus) {
-  border-color: var(--accent); box-shadow: var(--ring);
+  border-color: var(--accent);
+  box-shadow: var(--ring);
 }
 
 :deep(.ce-btn-ghost) {
@@ -182,7 +219,9 @@ async function submit() {
   font-size: 13px;
   cursor: pointer;
 }
-:deep(.ce-btn-ghost:hover) { background: var(--surface-elevated); }
+:deep(.ce-btn-ghost:hover) {
+  background: var(--surface-elevated);
+}
 
 :deep(.ce-btn-primary) {
   background: var(--accent);
@@ -196,5 +235,7 @@ async function submit() {
   cursor: pointer;
   margin-left: 8px;
 }
-:deep(.ce-btn-primary:hover) { background: var(--accent-hover); }
+:deep(.ce-btn-primary:hover) {
+  background: var(--accent-hover);
+}
 </style>

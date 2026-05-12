@@ -19,8 +19,20 @@ defineProps<{ status: VacationStatus }>();
   letter-spacing: 0.08em;
   line-height: 1.4;
 }
-.pending   { color: var(--status-pending);  background: var(--status-pending-bg); }
-.approved  { color: var(--status-approved); background: var(--status-approved-bg); }
-.rejected  { color: var(--status-rejected); background: var(--status-rejected-bg); }
-.cancelled { color: var(--ink-muted);       background: var(--surface-elevated); }
+.pending {
+  color: var(--status-pending);
+  background: var(--status-pending-bg);
+}
+.approved {
+  color: var(--status-approved);
+  background: var(--status-approved-bg);
+}
+.rejected {
+  color: var(--status-rejected);
+  background: var(--status-rejected-bg);
+}
+.cancelled {
+  color: var(--ink-muted);
+  background: var(--surface-elevated);
+}
 </style>

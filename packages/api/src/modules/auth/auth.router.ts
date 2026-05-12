@@ -14,21 +14,27 @@ export function buildAuthRouter() {
     try {
       const result = await service.register(req.body);
       res.status(201).json(result);
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   });
 
   router.post('/login', validate(loginSchema), async (req, res, next) => {
     try {
       const result = await service.login(req.body);
       res.json(result);
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   });
 
   router.get('/me', authenticate, async (req, res, next) => {
     try {
       const user = await service.getMe(req.user!.id);
       res.json({ user });
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   });
 
   return router;

@@ -6,12 +6,21 @@ import AppSidebar from './AppSidebar.vue';
 const auth = useAuthStore();
 const initials = computed(() => {
   const name = auth.user?.name ?? '?';
-  return name.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase();
+  return name
+    .split(' ')
+    .map(s => s[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 });
 
 const drawerOpen = ref(false);
-function toggleDrawer() { drawerOpen.value = !drawerOpen.value; }
-function closeDrawer() { drawerOpen.value = false; }
+function toggleDrawer() {
+  drawerOpen.value = !drawerOpen.value;
+}
+function closeDrawer() {
+  drawerOpen.value = false;
+}
 </script>
 
 <template>
@@ -23,7 +32,9 @@ function closeDrawer() { drawerOpen.value = false; }
           <button class="hamburger" @click="toggleDrawer" aria-label="Toggle navigation">
             <i class="pi pi-bars" />
           </button>
-          <div class="title">{{ $route.name === 'validator' ? 'All Requests' : 'My Requests' }}</div>
+          <div class="title">
+            {{ $route.name === 'validator' ? 'All Requests' : 'My Requests' }}
+          </div>
         </div>
         <div class="me">
           <div class="avatar">{{ initials }}</div>
@@ -41,8 +52,16 @@ function closeDrawer() { drawerOpen.value = false; }
 </template>
 
 <style scoped lang="scss">
-.shell { display: flex; min-height: 100vh; }
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 
 .topbar {
   display: flex;
@@ -76,7 +95,9 @@ function closeDrawer() { drawerOpen.value = false; }
   color: var(--ink-primary);
   font-size: 16px;
 
-  &:hover { background: var(--surface-elevated); }
+  &:hover {
+    background: var(--surface-elevated);
+  }
 }
 
 .title {
@@ -87,7 +108,11 @@ function closeDrawer() { drawerOpen.value = false; }
   letter-spacing: -0.015em;
 }
 
-.me { display: flex; align-items: center; gap: 12px; }
+.me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .avatar {
   width: 36px;
   height: 36px;
@@ -126,26 +151,48 @@ function closeDrawer() { drawerOpen.value = false; }
   color: var(--ink-secondary);
 }
 
-.content { padding: 32px; flex: 1; }
+.content {
+  padding: 32px;
+  flex: 1;
+}
 
 // Tablet (md)
 @media (max-width: 1023px) {
-  .topbar { padding: 0 24px; }
-  .content { padding: 24px; }
-  .title { font-size: 22px; }
+  .topbar {
+    padding: 0 24px;
+  }
+  .content {
+    padding: 24px;
+  }
+  .title {
+    font-size: 22px;
+  }
 }
 
 // Mobile (sm and below)
 @media (max-width: 767px) {
-  .topbar { padding: 0 16px; height: 56px; }
-  .content { padding: 16px; }
-  .title { font-size: 18px; }
-  .hamburger { display: inline-flex; }
-  .who { display: none; }
+  .topbar {
+    padding: 0 16px;
+    height: 56px;
+  }
+  .content {
+    padding: 16px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .hamburger {
+    display: inline-flex;
+  }
+  .who {
+    display: none;
+  }
 }
 
 // xs phones
 @media (max-width: 479px) {
-  .content { padding: 12px; }
+  .content {
+    padding: 12px;
+  }
 }
 </style>

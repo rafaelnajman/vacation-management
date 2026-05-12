@@ -4,17 +4,14 @@ import { makeUser } from '../../tests/factories.js';
 
 const app = buildApp();
 
-
 describe('POST /api/auth/register', () => {
   it('creates a user and returns token + safe user (no password_hash)', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Alice',
-        email: 'alice@example.com',
-        password: 'Password123!',
-        role: 'Requester',
-      });
+    const res = await request(app).post('/api/auth/register').send({
+      name: 'Alice',
+      email: 'alice@example.com',
+      password: 'Password123!',
+      role: 'Requester',
+    });
 
     expect(res.status).toBe(201);
     expect(res.body.token).toEqual(expect.any(String));
@@ -43,8 +40,8 @@ describe('POST /api/auth/register', () => {
 
   it.each([
     ['short password', { password: 'short' }],
-    ['invalid email',  { email: 'not-an-email' }],
-    ['missing role',   { role: undefined }],
+    ['invalid email', { email: 'not-an-email' }],
+    ['missing role', { role: undefined }],
   ])('rejects %s with 400 + Zod issues', async (_, override) => {
     const res = await request(app)
       .post('/api/auth/register')
@@ -64,9 +61,7 @@ describe('POST /api/auth/register', () => {
 describe('POST /api/auth/login', () => {
   it('returns 200 + token for valid credentials', async () => {
     const { user, password } = await makeUser({ email: 'log@example.com' });
-    const res = await request(app)
-      .post('/api/auth/login')
-      .send({ email: user.email, password });
+    const res = await request(app).post('/api/auth/login').send({ email: user.email, password });
     expect(res.status).toBe(200);
     expect(res.body.token).toEqual(expect.any(String));
     expect(res.body.user.email).toBe('log@example.com');
@@ -93,9 +88,7 @@ describe('POST /api/auth/login', () => {
 describe('GET /api/auth/me', () => {
   it('returns the current user with a valid token', async () => {
     const { user, token } = await makeUser({ email: 'me@example.com' });
-    const res = await request(app)
-      .get('/api/auth/me')
-      .set('Authorization', `Bearer ${token}`);
+    const res = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.user.id).toBe(user.id);
     expect(res.body.user.email).toBe('me@example.com');

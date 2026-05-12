@@ -5,10 +5,10 @@ services:
       POSTGRES_DB: vacations
       POSTGRES_USER: vacations
       POSTGRES_PASSWORD: vacations
-    ports: ["5432:5432"]
-    volumes: ["db-data:/var/lib/postgresql/data"]
+    ports: ['5432:5432']
+    volumes: ['db-data:/var/lib/postgresql/data']
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U vacations -d vacations"]
+      test: ['CMD-SHELL', 'pg_isready -U vacations -d vacations']
       interval: 3s
       timeout: 3s
       retries: 10
@@ -21,16 +21,16 @@ services:
       DATABASE_URL: postgres://vacations:vacations@db:5432/vacations
       JWT_SECRET: ${JWT_SECRET:-change-me-in-real-deployments-min-16-chars}
       JWT_EXPIRES_IN: 24h
-      BCRYPT_ROUNDS: "10"
+      BCRYPT_ROUNDS: '10'
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
-      PORT: "3000"
+      PORT: '3000'
       NODE_ENV: production
-    ports: ["3000:3000"]
+    ports: ['3000:3000']
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health > /dev/null || exit 1"]
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000/health > /dev/null || exit 1']
       interval: 3s
       timeout: 3s
       retries: 15

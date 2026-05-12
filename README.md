@@ -8,6 +8,7 @@ A two-interface vacation request management system built for the Travelfactory w
 ## Features
 
 ### Requester
+
 - Submit vacation requests with start/end dates and an optional reason.
 - View own requests in a paginated table with live status.
 - **Edit** a still-pending request from the detail drawer.
@@ -15,6 +16,7 @@ A two-interface vacation request management system built for the Travelfactory w
 - Inline form validation reusing the same Zod schemas the API uses (single source of truth).
 
 ### Validator
+
 - Stats dashboard with clickable filter cards (Pending / Approved / Rejected).
 - Filter all requests by status, requester name/email, and date range.
 - Approve via confirm dialog; reject via modal with a required reason (UI-enforced).
@@ -22,6 +24,7 @@ A two-interface vacation request management system built for the Travelfactory w
 - Paginated, sortable, lazy-loaded table.
 
 ### Cross-cutting
+
 - JWT-based authentication, role-aware route guards.
 - Overlap detection on submit and on edit (cannot submit/extend a pending/approved request overlapping the requester's existing ones; editing excludes the row being edited from the candidate set).
 - DB-level CHECK constraint enforces `end_date >= start_date`.
@@ -45,28 +48,28 @@ That's it. `npm run setup` is idempotent — safe to run again. It takes ~30s fr
 
 Other useful scripts:
 
-| Command | What it does |
-|---|---|
-| `npm run setup` | One-shot: install + Docker up + seed |
-| `npm run stack:up` | Just (re)build and start db + api |
-| `npm run stack:down` | Stop the Docker stack |
-| `npm run seed` | Re-run the seed against the running stack (idempotent) |
-| `npm run dev:web` | Vite dev server for the frontend |
-| `npm run dev:api` | Run the API locally with hot-reload (instead of via Docker) |
-| `npm run test:api` | Run the backend test suite |
-| `npm run typecheck` | Typecheck all workspaces |
+| Command              | What it does                                                |
+| -------------------- | ----------------------------------------------------------- |
+| `npm run setup`      | One-shot: install + Docker up + seed                        |
+| `npm run stack:up`   | Just (re)build and start db + api                           |
+| `npm run stack:down` | Stop the Docker stack                                       |
+| `npm run seed`       | Re-run the seed against the running stack (idempotent)      |
+| `npm run dev:web`    | Vite dev server for the frontend                            |
+| `npm run dev:api`    | Run the API locally with hot-reload (instead of via Docker) |
+| `npm run test:api`   | Run the backend test suite                                  |
+| `npm run typecheck`  | Typecheck all workspaces                                    |
 
 > **macOS note:** If `curl http://localhost:3000` fails but `curl http://127.0.0.1:3000` succeeds, that's the macOS IPv6/Docker quirk. The Vite dev proxy uses `localhost` internally and works fine; only direct CLI requests to the API container hit this.
 
 ## Demo users
 
-| Email                  | Password          | Role       |
-|------------------------|-------------------|------------|
-| `alice@example.com`    | `Demo123!`        | Requester  |
-| `carol@example.com`    | `Demo123!`        | Requester  |
-| `daniel@example.com`   | `Demo123!`        | Requester  |
-| `elena@example.com`    | `Demo123!`        | Requester  |
-| `bob@example.com`      | `Validator123!`   | Validator  |
+| Email                | Password        | Role      |
+| -------------------- | --------------- | --------- |
+| `alice@example.com`  | `Demo123!`      | Requester |
+| `carol@example.com`  | `Demo123!`      | Requester |
+| `daniel@example.com` | `Demo123!`      | Requester |
+| `elena@example.com`  | `Demo123!`      | Requester |
+| `bob@example.com`    | `Validator123!` | Validator |
 
 The seed also creates 7 vacation requests spread across Pending / Approved / Rejected so the validator dashboard demos with real-feeling data.
 
@@ -102,20 +105,20 @@ The backend deliberately demonstrates standard OOP and design patterns:
 
 ## API documentation
 
-| Method | Path                                          | Auth | Role        | Description                                                  |
-|--------|-----------------------------------------------|------|-------------|--------------------------------------------------------------|
-| POST   | `/api/auth/register`                          | –    | –           | Create account + return JWT.                                 |
-| POST   | `/api/auth/login`                             | –    | –           | Login + return JWT.                                          |
-| GET    | `/api/auth/me`                                | JWT  | any         | Return the current user.                                     |
-| POST   | `/api/vacation-requests`                      | JWT  | Requester   | Submit a request.                                            |
-| GET    | `/api/vacation-requests/me`                   | JWT  | Requester   | List the caller's own requests.                              |
-| GET    | `/api/vacation-requests`                      | JWT  | Validator   | Paginated list with filters (excludes `Cancelled` by default).|
-| GET    | `/api/vacation-requests/stats`                | JWT  | Validator   | Counts grouped by status (Pending/Approved/Rejected only).   |
-| GET    | `/api/vacation-requests/:id`                  | JWT  | any         | Read one request (Requester: own only; Validator: any).      |
-| PATCH  | `/api/vacation-requests/:id`                  | JWT  | Requester   | Edit own request (Pending only). Body: `{startDate?, endDate?, reason?}`. |
-| POST   | `/api/vacation-requests/:id/cancel`           | JWT  | Requester   | Cancel own request (Pending only) — transitions to `Cancelled`. |
-| POST   | `/api/vacation-requests/:id/approve`          | JWT  | Validator   | Approve a Pending request.                                   |
-| POST   | `/api/vacation-requests/:id/reject`           | JWT  | Validator   | Reject a Pending request.                                    |
+| Method | Path                                 | Auth | Role      | Description                                                               |
+| ------ | ------------------------------------ | ---- | --------- | ------------------------------------------------------------------------- |
+| POST   | `/api/auth/register`                 | –    | –         | Create account + return JWT.                                              |
+| POST   | `/api/auth/login`                    | –    | –         | Login + return JWT.                                                       |
+| GET    | `/api/auth/me`                       | JWT  | any       | Return the current user.                                                  |
+| POST   | `/api/vacation-requests`             | JWT  | Requester | Submit a request.                                                         |
+| GET    | `/api/vacation-requests/me`          | JWT  | Requester | List the caller's own requests.                                           |
+| GET    | `/api/vacation-requests`             | JWT  | Validator | Paginated list with filters (excludes `Cancelled` by default).            |
+| GET    | `/api/vacation-requests/stats`       | JWT  | Validator | Counts grouped by status (Pending/Approved/Rejected only).                |
+| GET    | `/api/vacation-requests/:id`         | JWT  | any       | Read one request (Requester: own only; Validator: any).                   |
+| PATCH  | `/api/vacation-requests/:id`         | JWT  | Requester | Edit own request (Pending only). Body: `{startDate?, endDate?, reason?}`. |
+| POST   | `/api/vacation-requests/:id/cancel`  | JWT  | Requester | Cancel own request (Pending only) — transitions to `Cancelled`.           |
+| POST   | `/api/vacation-requests/:id/approve` | JWT  | Validator | Approve a Pending request.                                                |
+| POST   | `/api/vacation-requests/:id/reject`  | JWT  | Validator | Reject a Pending request.                                                 |
 
 Sample requests:
 
@@ -141,6 +144,7 @@ Two tables, native Postgres enums, UUID primary keys, explicit constraints and i
 - Indexes: `(user_id, status)` for overlap detection and "my requests"; `(status, created_at DESC)` for the validator's default sort.
 
 Migrations:
+
 - `Init1715500000000` — creates the two tables, both enums, all constraints and indexes.
 - `AddCancelledStatus1715600000000` — extends the `vacation_status` enum with `'Cancelled'` (non-transactional migration, required by Postgres for `ALTER TYPE ADD VALUE`).
 

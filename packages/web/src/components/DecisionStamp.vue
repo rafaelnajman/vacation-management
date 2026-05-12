@@ -82,12 +82,20 @@ defineProps<{
 }
 
 @keyframes stamp-fade-in {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @keyframes stamp-fade-out {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 // Stamp punch animation
@@ -96,8 +104,12 @@ defineProps<{
 }
 
 @keyframes stamp-punch {
-  0%   { transform: rotate(0deg) scale(0.4); }
-  100% { transform: rotate(var(--stamp-rotation)) scale(1); }
+  0% {
+    transform: rotate(0deg) scale(0.4);
+  }
+  100% {
+    transform: rotate(var(--stamp-rotation)) scale(1);
+  }
 }
 
 // Respect reduced motion

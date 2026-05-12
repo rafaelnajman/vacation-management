@@ -1,8 +1,4 @@
-import {
-  createVacationSchema,
-  loginSchema,
-  registerSchema,
-} from '@vacation/shared';
+import { createVacationSchema, loginSchema, registerSchema } from '@vacation/shared';
 
 describe('createVacationSchema', () => {
   it('rejects endDate before startDate', () => {
@@ -28,14 +24,20 @@ describe('createVacationSchema', () => {
 describe('registerSchema', () => {
   it('lowercases email', () => {
     const r = registerSchema.safeParse({
-      name: 'A', email: 'A@B.COM', password: 'Password123!', role: 'Requester',
+      name: 'A',
+      email: 'A@B.COM',
+      password: 'Password123!',
+      role: 'Requester',
     });
     expect(r.success && r.data.email).toBe('a@b.com');
   });
 
   it('rejects short password', () => {
     const r = registerSchema.safeParse({
-      name: 'A', email: 'a@b.com', password: 'short', role: 'Requester',
+      name: 'A',
+      email: 'a@b.com',
+      password: 'short',
+      role: 'Requester',
     });
     expect(r.success).toBe(false);
   });

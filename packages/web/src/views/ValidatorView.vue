@@ -35,14 +35,16 @@ const stampVisible = ref(false);
 function showStamp(decision: 'Approved' | 'Rejected') {
   stampDecision.value = decision;
   stampVisible.value = true;
-  setTimeout(() => { stampVisible.value = false; }, 720);
+  setTimeout(() => {
+    stampVisible.value = false;
+  }, 720);
 }
 
 const statusOptions = [
-  { label: 'All',       value: null },
-  { label: 'Pending',   value: 'Pending' },
-  { label: 'Approved',  value: 'Approved' },
-  { label: 'Rejected',  value: 'Rejected' },
+  { label: 'All', value: null },
+  { label: 'Pending', value: 'Pending' },
+  { label: 'Approved', value: 'Approved' },
+  { label: 'Rejected', value: 'Rejected' },
   { label: 'Cancelled', value: 'Cancelled' },
 ];
 
@@ -53,7 +55,9 @@ function fmt(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-async function loadStats() { stats.value = await vacationsApi.stats(); }
+async function loadStats() {
+  stats.value = await vacationsApi.stats();
+}
 
 async function loadPage(params: { page: number; pageSize: number }) {
   return vacationsApi.listAll({
@@ -62,7 +66,7 @@ async function loadPage(params: { page: number; pageSize: number }) {
     status: filters.status ?? undefined,
     requester: filters.requester || undefined,
     from: filters.range?.[0] ? fmt(filters.range[0]) : undefined,
-    to:   filters.range?.[1] ? fmt(filters.range[1]) : undefined,
+    to: filters.range?.[1] ? fmt(filters.range[1]) : undefined,
   });
 }
 
@@ -76,7 +80,13 @@ function clearFilters() {
   filters.range = null;
 }
 
-watch(filters, () => { tableRef.value?.reload(); }, { deep: true });
+watch(
+  filters,
+  () => {
+    tableRef.value?.reload();
+  },
+  { deep: true },
+);
 
 async function approve(row: VacationRequestDTO) {
   confirm.require({
@@ -91,7 +101,9 @@ async function approve(row: VacationRequestDTO) {
         showStamp('Approved');
         toast.success('Request approved');
         await refresh();
-      } catch (e) { toast.apiError(e); }
+      } catch (e) {
+        toast.apiError(e);
+      }
     },
   });
 }
@@ -109,7 +121,9 @@ async function confirmReject(comments: string) {
     showStamp('Rejected');
     toast.success('Request rejected');
     await refresh();
-  } catch (e) { toast.apiError(e); }
+  } catch (e) {
+    toast.apiError(e);
+  }
 }
 
 async function refresh() {
@@ -123,39 +137,79 @@ onMounted(loadStats);
   <AppShell>
     <div class="page">
       <div class="stats-row">
-        <StatsCard class="rise" label="Pending"  :count="stats.pending"  icon="pi pi-clock"
-                   :active="filters.status === 'Pending'"  @click="applyStatusFromCard('Pending')" />
-        <StatsCard class="rise" label="Approved" :count="stats.approved" icon="pi pi-check-circle"
-                   :active="filters.status === 'Approved'" @click="applyStatusFromCard('Approved')" />
-        <StatsCard class="rise" label="Rejected" :count="stats.rejected" icon="pi pi-times-circle"
-                   :active="filters.status === 'Rejected'" @click="applyStatusFromCard('Rejected')" />
+        <StatsCard
+          class="rise"
+          label="Pending"
+          :count="stats.pending"
+          icon="pi pi-clock"
+          :active="filters.status === 'Pending'"
+          @click="applyStatusFromCard('Pending')"
+        />
+        <StatsCard
+          class="rise"
+          label="Approved"
+          :count="stats.approved"
+          icon="pi pi-check-circle"
+          :active="filters.status === 'Approved'"
+          @click="applyStatusFromCard('Approved')"
+        />
+        <StatsCard
+          class="rise"
+          label="Rejected"
+          :count="stats.rejected"
+          icon="pi pi-times-circle"
+          :active="filters.status === 'Rejected'"
+          @click="applyStatusFromCard('Rejected')"
+        />
       </div>
 
       <section class="filters rise">
         <div class="filter">
           <label class="lbl">Status</label>
-          <Select v-model="filters.status" :options="statusOptions"
-                  optionLabel="label" optionValue="value" placeholder="All"
-                  :pt="{ root: { class: 'ce-select' } }" />
+          <Select
+            v-model="filters.status"
+            :options="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="All"
+            :pt="{ root: { class: 'ce-select' } }"
+          />
         </div>
         <div class="filter">
           <label class="lbl">Requester</label>
-          <InputText v-model="filters.requester" placeholder="Search requester…"
-                     :pt="{ root: { class: 'ce-input' } }" />
+          <InputText
+            v-model="filters.requester"
+            placeholder="Search requester…"
+            :pt="{ root: { class: 'ce-input' } }"
+          />
         </div>
         <div class="filter">
           <label class="lbl">Date range</label>
-          <DatePicker v-model="filters.range" selectionMode="range" placeholder="From – to"
-                      dateFormat="yy-mm-dd" :pt="{ pcInput: { root: { class: 'ce-input' } } }" />
+          <DatePicker
+            v-model="filters.range"
+            selectionMode="range"
+            placeholder="From – to"
+            dateFormat="yy-mm-dd"
+            :pt="{ pcInput: { root: { class: 'ce-input' } } }"
+          />
         </div>
-        <Button text label="Clear" icon="pi pi-times" @click="clearFilters"
-                :pt="{ root: { class: 'ce-btn-clear' } }" />
+        <Button
+          text
+          label="Clear"
+          icon="pi pi-times"
+          @click="clearFilters"
+          :pt="{ root: { class: 'ce-btn-clear' } }"
+        />
       </section>
 
       <div class="rise">
-        <RequestTable ref="tableRef" :load="loadPage"
-                      @approve="approve" @reject="openReject"
-                      @row-click="(row) => detailId = row.id" />
+        <RequestTable
+          ref="tableRef"
+          :load="loadPage"
+          @approve="approve"
+          @reject="openReject"
+          @row-click="row => (detailId = row.id)"
+        />
       </div>
 
       <RejectModal v-model:visible="showRejectModal" @confirm="confirmReject" />
@@ -177,7 +231,10 @@ onMounted(loadStats);
 </template>
 
 <style scoped lang="scss">
-.page { display: grid; gap: 24px; }
+.page {
+  display: grid;
+  gap: 24px;
+}
 
 .stats-row {
   display: grid;
@@ -195,7 +252,10 @@ onMounted(loadStats);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
 }
-.filter { display: grid; gap: 6px; }
+.filter {
+  display: grid;
+  gap: 6px;
+}
 .lbl {
   font-family: var(--font-body);
   font-size: 11px;
@@ -216,11 +276,16 @@ onMounted(loadStats);
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
 }
 :deep(.ce-input input:focus),
-:deep(.ce-input:focus) { border-color: var(--accent); box-shadow: var(--ring); }
+:deep(.ce-input:focus) {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
 
 :deep(.ce-select) {
   background: var(--surface-card);
@@ -233,7 +298,11 @@ onMounted(loadStats);
   display: flex;
   align-items: center;
 }
-:deep(.ce-select:focus-within) { border-color: var(--accent); box-shadow: var(--ring); outline: none; }
+:deep(.ce-select:focus-within) {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+  outline: none;
+}
 
 :deep(.ce-btn-clear) {
   background: transparent;
@@ -246,7 +315,10 @@ onMounted(loadStats);
   cursor: pointer;
   height: 40px;
 }
-:deep(.ce-btn-clear:hover) { background: var(--surface-elevated); color: var(--ink-primary); }
+:deep(.ce-btn-clear:hover) {
+  background: var(--surface-elevated);
+  color: var(--ink-primary);
+}
 
 .page-footer {
   margin-top: 48px;
@@ -255,30 +327,41 @@ onMounted(loadStats);
   font-family: var(--font-body);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.20em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-muted);
   display: flex;
   gap: 12px;
   align-items: center;
 }
-.page-footer .dot { font-size: 14px; color: var(--accent); }
+.page-footer .dot {
+  font-size: 14px;
+  color: var(--accent);
+}
 
 @media (max-width: 1023px) {
   .filters {
     grid-template-columns: 1fr 1fr;
     align-items: end;
   }
-  .filters :deep(.ce-btn-clear) { grid-column: 2; justify-self: end; }
+  .filters :deep(.ce-btn-clear) {
+    grid-column: 2;
+    justify-self: end;
+  }
 }
 
 @media (max-width: 767px) {
-  .stats-row { grid-template-columns: 1fr; }
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
   .filters {
     grid-template-columns: 1fr;
     padding: 16px;
   }
-  .filters :deep(.ce-btn-clear) { grid-column: 1; justify-self: stretch; }
+  .filters :deep(.ce-btn-clear) {
+    grid-column: 1;
+    justify-self: stretch;
+  }
   .page-footer {
     flex-wrap: wrap;
     font-size: 9px;

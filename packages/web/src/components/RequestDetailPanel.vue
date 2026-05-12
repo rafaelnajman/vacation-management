@@ -29,12 +29,16 @@ const showEditModal = ref(false);
 function showStamp(decision: 'Approved' | 'Rejected') {
   stampDecision.value = decision;
   stampVisible.value = true;
-  setTimeout(() => { stampVisible.value = false; }, 720);
+  setTimeout(() => {
+    stampVisible.value = false;
+  }, 720);
 }
 
 const visible = computed({
   get: () => !!props.id,
-  set: (v: boolean) => { if (!v) emit('close'); },
+  set: (v: boolean) => {
+    if (!v) emit('close');
+  },
 });
 
 const data = ref<VacationRequestDTO | null>(null);
@@ -51,9 +55,13 @@ async function load(id: string) {
   }
 }
 
-watch(() => props.id, id => {
-  if (id) load(id);
-}, { immediate: true });
+watch(
+  () => props.id,
+  id => {
+    if (id) load(id);
+  },
+  { immediate: true },
+);
 
 function days(start: string, end: string) {
   return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86400000) + 1;
@@ -69,20 +77,22 @@ function fmtRange(start: string, end: string) {
 
 function fmtTimestamp(iso: string) {
   return new Date(iso).toLocaleString('en-US', {
-    month: 'long', day: 'numeric', year: 'numeric',
-    hour: 'numeric', minute: '2-digit',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
   });
 }
 
-const canDecide = computed(() =>
-  auth.role === 'Validator' && data.value?.status === 'Pending'
-);
+const canDecide = computed(() => auth.role === 'Validator' && data.value?.status === 'Pending');
 
 // Requester can edit/cancel their own pending request
-const canEditOrCancel = computed(() =>
-  auth.role === 'Requester' &&
-  data.value?.status === 'Pending' &&
-  data.value?.userId === auth.user?.id
+const canEditOrCancel = computed(
+  () =>
+    auth.role === 'Requester' &&
+    data.value?.status === 'Pending' &&
+    data.value?.userId === auth.user?.id,
 );
 
 function approve() {
@@ -101,12 +111,16 @@ function approve() {
         toast.success('Request approved');
         emit('updated');
         emit('close');
-      } catch (e) { toast.apiError(e); }
+      } catch (e) {
+        toast.apiError(e);
+      }
     },
   });
 }
 
-function openReject() { showRejectModal.value = true; }
+function openReject() {
+  showRejectModal.value = true;
+}
 
 async function confirmReject(comments: string) {
   if (!data.value) return;
@@ -117,10 +131,14 @@ async function confirmReject(comments: string) {
     toast.success('Request rejected');
     emit('updated');
     emit('close');
-  } catch (e) { toast.apiError(e); }
+  } catch (e) {
+    toast.apiError(e);
+  }
 }
 
-function openEdit() { showEditModal.value = true; }
+function openEdit() {
+  showEditModal.value = true;
+}
 
 async function onEdited() {
   // Refresh the panel's data after a save
@@ -203,7 +221,15 @@ function confirmCancel() {
         <div v-if="data.status !== 'Pending'" class="event">
           <span class="dot" aria-hidden="true"></span>
           <div>
-            <div class="event-lbl">{{ data.status === 'Approved' ? 'Approved' : data.status === 'Rejected' ? 'Rejected' : 'Cancelled' }}</div>
+            <div class="event-lbl">
+              {{
+                data.status === 'Approved'
+                  ? 'Approved'
+                  : data.status === 'Rejected'
+                    ? 'Rejected'
+                    : 'Cancelled'
+              }}
+            </div>
             <div class="event-date">{{ fmtTimestamp(data.updatedAt) }}</div>
           </div>
         </div>
@@ -247,8 +273,12 @@ function confirmCancel() {
   background: var(--surface-card);
   border-bottom: 1px solid var(--border);
 }
-:deep(.ce-drawer-content) { padding: 0; }
-:deep(.ce-drawer-mask) { background: rgba(10, 14, 20, 0.55); }
+:deep(.ce-drawer-content) {
+  padding: 0;
+}
+:deep(.ce-drawer-mask) {
+  background: rgba(10, 14, 20, 0.55);
+}
 
 .header-band {
   padding: 24px 32px;
@@ -268,7 +298,9 @@ function confirmCancel() {
   align-items: center;
   gap: 16px;
 }
-.badge { display: inline-flex; }
+.badge {
+  display: inline-flex;
+}
 
 .loading {
   padding: 40px 32px;
@@ -284,7 +316,9 @@ function confirmCancel() {
 }
 
 @media (max-width: 767px) {
-  .body { padding: 20px; }
+  .body {
+    padding: 20px;
+  }
 }
 
 .range-text {
@@ -324,10 +358,17 @@ function confirmCancel() {
   padding-left: 16px;
   border-left: 3px solid var(--border-strong);
 }
-.comment.rejected { border-left-color: var(--status-rejected); }
-.comment.approved { border-left-color: var(--status-approved); }
+.comment.rejected {
+  border-left-color: var(--status-rejected);
+}
+.comment.approved {
+  border-left-color: var(--status-approved);
+}
 
-.timeline { display: grid; gap: 14px; }
+.timeline {
+  display: grid;
+  gap: 14px;
+}
 .event {
   display: grid;
   grid-template-columns: 16px 1fr;
@@ -345,7 +386,7 @@ function confirmCancel() {
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-primary);
 }
@@ -375,7 +416,9 @@ function confirmCancel() {
   cursor: pointer;
   transition: background 120ms;
 }
-:deep(.ce-btn-pine:hover) { background: #084643; }
+:deep(.ce-btn-pine:hover) {
+  background: #084643;
+}
 
 :deep(.ce-btn-danger) {
   background: var(--status-rejected);
@@ -388,7 +431,9 @@ function confirmCancel() {
   font-size: 14px;
   cursor: pointer;
 }
-:deep(.ce-btn-danger:hover) { filter: brightness(0.95); }
+:deep(.ce-btn-danger:hover) {
+  filter: brightness(0.95);
+}
 
 :deep(.ce-btn-cancel-request) {
   background: transparent;
@@ -424,5 +469,7 @@ function confirmCancel() {
   align-items: center;
   gap: 6px;
 }
-:deep(.ce-btn-primary:hover) { background: var(--accent-hover); }
+:deep(.ce-btn-primary:hover) {
+  background: var(--accent-hover);
+}
 </style>

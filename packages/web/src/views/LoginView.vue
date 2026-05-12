@@ -95,7 +95,7 @@ async function submit() {
               :inputProps="{ class: 'ce-input', id: 'password' }"
               :pt="{
                 root: { class: 'ce-password-root' },
-                input: { class: 'ce-input' }
+                input: { class: 'ce-input' },
               }"
             />
             <small class="err" v-if="errors.password">{{ errors.password[0] }}</small>
@@ -133,8 +133,12 @@ async function submit() {
 }
 
 @media (max-width: 1023px) and (min-width: 768px) {
-  .login-layout { grid-template-columns: 2fr 3fr; }
-  .left-panel { padding: 32px; }
+  .login-layout {
+    grid-template-columns: 2fr 3fr;
+  }
+  .left-panel {
+    padding: 32px;
+  }
 }
 
 /* ── Left panel ─────────────────────────────────────────── */
@@ -170,7 +174,7 @@ async function submit() {
   font-size: 88px;
   color: var(--ink-on-inverse);
   letter-spacing: -0.015em;
-  line-height: 1.0;
+  line-height: 1;
 }
 
 .wm-letter {
@@ -180,11 +184,19 @@ async function submit() {
   animation: wm-fade-up 540ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
 }
 
-.wm-accent { color: var(--accent); }
+.wm-accent {
+  color: var(--accent);
+}
 
 @keyframes wm-fade-up {
-  0%   { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -297,7 +309,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
   box-shadow: none;
 }
@@ -328,7 +342,9 @@ async function submit() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
   box-shadow: none;
 }
@@ -359,7 +375,10 @@ async function submit() {
   font-size: 14px;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background 120ms, transform 120ms, box-shadow 120ms;
+  transition:
+    background 120ms,
+    transform 120ms,
+    box-shadow 120ms;
   justify-content: center;
 }
 
@@ -416,7 +435,9 @@ async function submit() {
 
 /* ── Tablet md (768–1023px): reduce wordmark size ──────── */
 @media (max-width: 1023px) {
-  .wordmark { font-size: 64px; }
+  .wordmark {
+    font-size: 64px;
+  }
 }
 
 /* ── Mobile (<768px) ────────────────────────────────────── */
@@ -440,9 +461,15 @@ async function submit() {
     font-size: 9px;
   }
 
-  .wordmark { font-size: 44px; }
-  .ops-label { display: none; }
-  .left-rule { display: none; }
+  .wordmark {
+    font-size: 44px;
+  }
+  .ops-label {
+    display: none;
+  }
+  .left-rule {
+    display: none;
+  }
 
   .tagline {
     font-size: 13px;
@@ -463,7 +490,11 @@ async function submit() {
 
 /* ── xs phones (<480px) ─────────────────────────────────── */
 @media (max-width: 479px) {
-  .login-layout { grid-template-rows: 140px 1fr; }
-  .wordmark { font-size: 36px; }
+  .login-layout {
+    grid-template-rows: 140px 1fr;
+  }
+  .wordmark {
+    font-size: 36px;
+  }
 }
 </style>

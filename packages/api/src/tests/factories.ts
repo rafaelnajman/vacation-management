@@ -8,12 +8,14 @@ import { env } from '../config/env.js';
 
 let counter = 0;
 
-export async function makeUser(overrides: Partial<{
-  name: string;
-  email: string;
-  password: string;
-  role: Role;
-}> = {}): Promise<{ user: User; token: string; password: string }> {
+export async function makeUser(
+  overrides: Partial<{
+    name: string;
+    email: string;
+    password: string;
+    role: Role;
+  }> = {},
+): Promise<{ user: User; token: string; password: string }> {
   counter += 1;
   const password = overrides.password ?? 'Password123!';
   const passwordHash = await bcrypt.hash(password, 4); // low cost in tests

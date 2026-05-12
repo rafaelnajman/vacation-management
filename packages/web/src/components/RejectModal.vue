@@ -13,11 +13,19 @@ const emit = defineEmits<{
 const comments = ref('');
 const error = ref('');
 
-watch(() => props.visible, v => {
-  if (v) { comments.value = ''; error.value = ''; }
-});
+watch(
+  () => props.visible,
+  v => {
+    if (v) {
+      comments.value = '';
+      error.value = '';
+    }
+  },
+);
 
-function close() { emit('update:visible', false); }
+function close() {
+  emit('update:visible', false);
+}
 function confirm() {
   if (!comments.value.trim()) {
     error.value = 'A reason for rejection is required';
@@ -34,11 +42,11 @@ function confirm() {
     header="Reject request"
     :style="{ width: 'min(460px, calc(100vw - 32px))' }"
     :pt="{
-      root:    { class: 'ce-dialog' },
-      header:  { class: 'ce-dialog-header' },
-      title:   { class: 'ce-dialog-title' },
+      root: { class: 'ce-dialog' },
+      header: { class: 'ce-dialog-header' },
+      title: { class: 'ce-dialog-title' },
       content: { class: 'ce-dialog-content' },
-      mask:    { class: 'ce-dialog-mask' },
+      mask: { class: 'ce-dialog-mask' },
     }"
     @update:visible="emit('update:visible', $event)"
   >
@@ -89,7 +97,10 @@ function confirm() {
   background: rgba(10, 14, 20, 0.55);
 }
 
-.body { display: grid; gap: 8px; }
+.body {
+  display: grid;
+  gap: 8px;
+}
 .lbl {
   font-family: var(--font-body);
   font-size: 11px;
@@ -98,7 +109,10 @@ function confirm() {
   text-transform: uppercase;
   color: var(--ink-secondary);
 }
-.err { font-size: 12px; color: var(--status-rejected); }
+.err {
+  font-size: 12px;
+  color: var(--status-rejected);
+}
 
 :deep(.ce-input),
 :deep(.ce-input textarea) {
@@ -110,11 +124,18 @@ function confirm() {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--ink-primary);
-  transition: border-color 120ms, box-shadow 120ms;
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
   outline: none;
 }
-:deep(.ce-textarea) { padding: 0; }
-:deep(.ce-input textarea:focus) { border-color: var(--accent); box-shadow: var(--ring); }
+:deep(.ce-textarea) {
+  padding: 0;
+}
+:deep(.ce-input textarea:focus) {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
 
 // Footer buttons
 :deep(.ce-btn-ghost) {
@@ -128,7 +149,9 @@ function confirm() {
   font-size: 13px;
   cursor: pointer;
 }
-:deep(.ce-btn-ghost:hover) { background: var(--surface-elevated); }
+:deep(.ce-btn-ghost:hover) {
+  background: var(--surface-elevated);
+}
 
 :deep(.ce-btn-danger) {
   background: var(--status-rejected);
@@ -142,5 +165,7 @@ function confirm() {
   cursor: pointer;
   margin-left: 8px;
 }
-:deep(.ce-btn-danger:hover) { filter: brightness(0.95); }
+:deep(.ce-btn-danger:hover) {
+  filter: brightness(0.95);
+}
 </style>

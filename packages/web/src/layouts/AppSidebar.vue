@@ -34,7 +34,9 @@ const todayLabel = computed(() => {
   return `${month} ${day}, ${weekday}`;
 });
 
-function handleNavClick() { emit('close'); }
+function handleNavClick() {
+  emit('close');
+}
 </script>
 
 <template>
@@ -87,8 +89,12 @@ function handleNavClick() { emit('close'); }
   flex-direction: column;
 }
 
-.close-btn { display: none; }
-.sidebar-backdrop { display: none; }
+.close-btn {
+  display: none;
+}
+.sidebar-backdrop {
+  display: none;
+}
 
 // Desktop (md+): sticky sidebar
 @media (min-width: 768px) {
@@ -115,7 +121,9 @@ function handleNavClick() { emit('close'); }
     z-index: 30;
     box-shadow: 0 12px 32px -16px rgba(15, 30, 44, 0.18);
   }
-  .sidebar.open { transform: translateX(0); }
+  .sidebar.open {
+    transform: translateX(0);
+  }
 
   .sidebar-backdrop {
     display: block;
@@ -140,31 +148,40 @@ function handleNavClick() { emit('close'); }
     color: var(--ink-secondary);
     font-size: 16px;
 
-    &:hover { color: var(--ink-primary); }
+    &:hover {
+      color: var(--ink-primary);
+    }
   }
 }
 
-.brand { padding: 20px 24px 24px; }
+.brand {
+  padding: 20px 24px 24px;
+}
 .brand-mark {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 28px;
   letter-spacing: -0.015em;
   color: var(--ink-primary);
-  line-height: 1.0;
+  line-height: 1;
 }
 .brand-sub {
   margin-top: 6px;
   font-family: var(--font-body);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.20em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-muted);
 }
-.accent { color: var(--accent); }
+.accent {
+  color: var(--accent);
+}
 
-.nav { flex: 1; padding: 16px 0; }
+.nav {
+  flex: 1;
+  padding: 16px 0;
+}
 .nav-item {
   display: flex;
   align-items: center;
@@ -177,11 +194,18 @@ function handleNavClick() { emit('close'); }
   color: var(--ink-secondary);
   text-decoration: none;
   border-left: 3px solid transparent;
-  transition: color 120ms, background 120ms;
+  transition:
+    color 120ms,
+    background 120ms;
 
-  i { font-size: 14px; }
+  i {
+    font-size: 14px;
+  }
 
-  &:hover { color: var(--ink-primary); background: var(--surface-elevated); }
+  &:hover {
+    color: var(--ink-primary);
+    background: var(--surface-elevated);
+  }
   &.active {
     color: var(--ink-primary);
     font-weight: 700;
@@ -232,10 +256,17 @@ function handleNavClick() { emit('close'); }
   text-transform: uppercase;
   color: var(--ink-secondary);
   cursor: pointer;
-  transition: color 120ms, background 120ms;
+  transition:
+    color 120ms,
+    background 120ms;
 
-  i { font-size: 14px; }
+  i {
+    font-size: 14px;
+  }
 
-  &:hover { color: var(--ink-primary); background: var(--surface-elevated); }
+  &:hover {
+    color: var(--ink-primary);
+    background: var(--surface-elevated);
+  }
 }
 </style>

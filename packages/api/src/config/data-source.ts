@@ -7,9 +7,7 @@ import { Init1715500000000 } from '../migrations/1715500000000-Init.js';
 import { AddCancelledStatus1715600000000 } from '../migrations/1715600000000-AddCancelledStatus.js';
 
 const databaseUrl =
-  env.NODE_ENV === 'test' && env.TEST_DATABASE_URL
-    ? env.TEST_DATABASE_URL
-    : env.DATABASE_URL;
+  env.NODE_ENV === 'test' && env.TEST_DATABASE_URL ? env.TEST_DATABASE_URL : env.DATABASE_URL;
 
 export const AppDataSource = new DataSource({
   type: 'postgres',

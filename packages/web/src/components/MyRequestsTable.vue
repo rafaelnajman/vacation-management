@@ -15,7 +15,11 @@ const loading = ref(true);
 
 async function load() {
   loading.value = true;
-  try { items.value = await vacationsApi.listMine(); } finally { loading.value = false; }
+  try {
+    items.value = await vacationsApi.listMine();
+  } finally {
+    loading.value = false;
+  }
 }
 
 function onRowClick(e: { data: VacationRequestDTO }) {
@@ -56,7 +60,12 @@ function days(start: string, end: string) {
           <p class="empty-body">Submit your first vacation request using the form on the left.</p>
         </div>
       </template>
-      <Column field="startDate" header="Start" sortable :pt="{ bodyCell: { 'data-label': 'Start' } }">
+      <Column
+        field="startDate"
+        header="Start"
+        sortable
+        :pt="{ bodyCell: { 'data-label': 'Start' } }"
+      >
         <template #body="{ data }">{{ data.startDate }}</template>
       </Column>
       <Column field="endDate" header="End" sortable :pt="{ bodyCell: { 'data-label': 'End' } }">
@@ -78,7 +87,12 @@ function days(start: string, end: string) {
           <span class="comments">{{ data.comments || '—' }}</span>
         </template>
       </Column>
-      <Column field="createdAt" header="Submitted" sortable :pt="{ bodyCell: { 'data-label': 'Submitted' } }">
+      <Column
+        field="createdAt"
+        header="Submitted"
+        sortable
+        :pt="{ bodyCell: { 'data-label': 'Submitted' } }"
+      >
         <template #body="{ data }">{{ new Date(data.createdAt).toLocaleDateString() }}</template>
       </Column>
     </DataTable>
@@ -96,7 +110,9 @@ function days(start: string, end: string) {
 }
 .hairline {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   overflow: hidden;
   z-index: 1;
@@ -111,13 +127,24 @@ function days(start: string, end: string) {
   animation: hairline-slide 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes hairline-slide {
-  0%   { left: -30%; }
-  100% { left: 100%; }
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hairline-bar { animation: none; left: 0; width: 100%; opacity: 0.4; }
+  .hairline-bar {
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.4;
+  }
 }
-.header { margin-bottom: 20px; }
+.header {
+  margin-bottom: 20px;
+}
 .title {
   font-family: var(--font-display);
   font-size: 22px;
@@ -133,7 +160,8 @@ function days(start: string, end: string) {
   color: var(--ink-secondary);
   margin: 4px 0 0;
 }
-.reason, .comments {
+.reason,
+.comments {
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--ink-secondary);
@@ -142,7 +170,10 @@ function days(start: string, end: string) {
   text-align: center;
   padding: 40px 16px;
 }
-.empty-icon { font-size: 28px; color: var(--ink-muted); }
+.empty-icon {
+  font-size: 28px;
+  color: var(--ink-muted);
+}
 .empty-title {
   font-family: var(--font-display);
   font-style: italic;
@@ -230,10 +261,18 @@ function days(start: string, end: string) {
 
 // Mobile card layout — transform table rows into cards below 768px
 @media (max-width: 767px) {
-  .card { padding: 16px; }
-  :deep(.p-datatable) { background: transparent; }
-  :deep(.p-datatable-thead) { display: none; }
-  :deep(.p-datatable-tbody) { display: block; }
+  .card {
+    padding: 16px;
+  }
+  :deep(.p-datatable) {
+    background: transparent;
+  }
+  :deep(.p-datatable-thead) {
+    display: none;
+  }
+  :deep(.p-datatable-tbody) {
+    display: block;
+  }
   :deep(.p-datatable-tbody > tr) {
     display: block;
     background: var(--surface-card) !important;
@@ -263,7 +302,7 @@ function days(start: string, end: string) {
     font-family: var(--font-body);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-secondary);
     flex-shrink: 0;

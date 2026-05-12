@@ -23,7 +23,9 @@ export function buildVacationsRouter() {
     try {
       const items = await service.listMine(req.user!.id);
       res.json(items);
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   });
 
   // Stats must be before GET / to avoid being shadowed
@@ -31,7 +33,9 @@ export function buildVacationsRouter() {
     try {
       const result = await service.stats();
       res.json(result);
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   });
 
   router.post(
@@ -42,22 +46,22 @@ export function buildVacationsRouter() {
       try {
         const created = await service.create(req.user!.id, req.body);
         res.status(201).json(created);
-      } catch (e) { next(e); }
+      } catch (e) {
+        next(e);
+      }
     },
   );
 
-  router.get(
-    '/',
-    requireRole('Validator'),
-    async (req, res, next) => {
-      try {
-        const parsed = listVacationsQuerySchema.safeParse(req.query);
-        if (!parsed.success) return next(parsed.error);
-        const result = await service.listAll(parsed.data as ListVacationsQuery);
-        res.json(result);
-      } catch (e) { next(e); }
-    },
-  );
+  router.get('/', requireRole('Validator'), async (req, res, next) => {
+    try {
+      const parsed = listVacationsQuerySchema.safeParse(req.query);
+      if (!parsed.success) return next(parsed.error);
+      const result = await service.listAll(parsed.data as ListVacationsQuery);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  });
 
   router.patch(
     '/:id',
@@ -68,28 +72,30 @@ export function buildVacationsRouter() {
         const id = req.params.id as string;
         const result = await service.update(id, req.user!.id, req.body);
         res.json(result);
-      } catch (e) { next(e); }
+      } catch (e) {
+        next(e);
+      }
     },
   );
 
-  router.post(
-    '/:id/cancel',
-    requireRole('Requester'),
-    async (req, res, next) => {
-      try {
-        const id = req.params.id as string;
-        const result = await service.cancel(id, req.user!.id);
-        res.json(result);
-      } catch (e) { next(e); }
-    },
-  );
+  router.post('/:id/cancel', requireRole('Requester'), async (req, res, next) => {
+    try {
+      const id = req.params.id as string;
+      const result = await service.cancel(id, req.user!.id);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  });
 
   router.get('/:id', async (req, res, next) => {
     try {
       const id = req.params.id;
       const result = await service.getById(id, req.user!.id, req.user!.role);
       res.json(result);
-    } catch (e) { next(e); }
+    } catch (e) {
+      next(e);
+    }
   });
 
   router.post(
@@ -101,7 +107,9 @@ export function buildVacationsRouter() {
         const id = req.params['id'] as string;
         const result = await service.decide(id, 'Approved', req.body);
         res.json(result);
-      } catch (e) { next(e); }
+      } catch (e) {
+        next(e);
+      }
     },
   );
 
@@ -114,7 +122,9 @@ export function buildVacationsRouter() {
         const id = req.params['id'] as string;
         const result = await service.decide(id, 'Rejected', req.body);
         res.json(result);
-      } catch (e) { next(e); }
+      } catch (e) {
+        next(e);
+      }
     },
   );
 

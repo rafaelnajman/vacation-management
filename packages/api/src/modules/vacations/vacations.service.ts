@@ -70,10 +70,9 @@ export class VacationsService {
     }
     if (q.requesterId) qb.andWhere('v.userId = :rid', { rid: q.requesterId });
     if (q.requester) {
-      qb.andWhere(
-        '(LOWER(u.name) LIKE :req OR LOWER(u.email) LIKE :req)',
-        { req: `%${q.requester.toLowerCase()}%` },
-      );
+      qb.andWhere('(LOWER(u.name) LIKE :req OR LOWER(u.email) LIKE :req)', {
+        req: `%${q.requester.toLowerCase()}%`,
+      });
     }
     if (q.from) qb.andWhere('v.endDate >= :from', { from: q.from });
     if (q.to) qb.andWhere('v.startDate <= :to', { to: q.to });
@@ -103,7 +102,7 @@ export class VacationsService {
 
     const out: VacationStats = { pending: 0, approved: 0, rejected: 0 };
     for (const r of rows) {
-      if (r.status === 'Pending')  out.pending  = Number(r.count);
+      if (r.status === 'Pending') out.pending = Number(r.count);
       if (r.status === 'Approved') out.approved = Number(r.count);
       if (r.status === 'Rejected') out.rejected = Number(r.count);
     }
@@ -163,11 +162,12 @@ export class VacationsService {
 
       if (!row) throw AppError.notFound('Vacation request not found');
       if (row.userId !== userId) throw AppError.notFound('Vacation request not found'); // 404, no leakage
-      if (row.status !== 'Pending') throw AppError.conflict(`Cannot edit a ${row.status.toLowerCase()} request`, 'NOT_PENDING');
+      if (row.status !== 'Pending')
+        throw AppError.conflict(`Cannot edit a ${row.status.toLowerCase()} request`, 'NOT_PENDING');
 
       // Determine the post-update date range for validation
       const startDate = dto.startDate ?? row.startDate;
-      const endDate   = dto.endDate   ?? row.endDate;
+      const endDate = dto.endDate ?? row.endDate;
 
       // Future-only check (only when dates change)
       if (dto.startDate || dto.endDate) {
@@ -197,7 +197,7 @@ export class VacationsService {
       }
 
       row.startDate = startDate;
-      row.endDate   = endDate;
+      row.endDate = endDate;
       if (dto.reason !== undefined) row.reason = dto.reason ?? null;
 
       const saved = await repo.save(row);
@@ -216,7 +216,11 @@ export class VacationsService {
 
       if (!row) throw AppError.notFound('Vacation request not found');
       if (row.userId !== userId) throw AppError.notFound('Vacation request not found');
-      if (row.status !== 'Pending') throw AppError.conflict(`Cannot cancel a ${row.status.toLowerCase()} request`, 'NOT_PENDING');
+      if (row.status !== 'Pending')
+        throw AppError.conflict(
+          `Cannot cancel a ${row.status.toLowerCase()} request`,
+          'NOT_PENDING',
+        );
 
       row.status = 'Cancelled';
       const saved = await repo.save(row);

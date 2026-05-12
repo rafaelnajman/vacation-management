@@ -27,7 +27,9 @@ async function reload() {
     const result = await props.load({ page: page.value, pageSize: pageSize.value });
     rows.value = result.items;
     total.value = result.total;
-  } finally { loading.value = false; }
+  } finally {
+    loading.value = false;
+  }
 }
 
 function onPage(e: DataTablePageEvent) {
@@ -106,21 +108,40 @@ reload();
       <Column header="Status" :pt="{ bodyCell: { 'data-label': 'Status' } }">
         <template #body="{ data }"><StatusBadge :status="data.status" /></template>
       </Column>
-      <Column field="createdAt" header="Submitted" :pt="{ bodyCell: { 'data-label': 'Submitted' } }">
+      <Column
+        field="createdAt"
+        header="Submitted"
+        :pt="{ bodyCell: { 'data-label': 'Submitted' } }"
+      >
         <template #body="{ data }">
           <div class="submitted">
             <span>{{ new Date(data.createdAt).toLocaleDateString() }}</span>
-            <span v-if="wasEdited(data)" class="edited-pill" title="This request was edited after submission">edited</span>
+            <span
+              v-if="wasEdited(data)"
+              class="edited-pill"
+              title="This request was edited after submission"
+              >edited</span
+            >
           </div>
         </template>
       </Column>
       <Column header="Actions" style="width: 160px" :pt="{ bodyCell: { 'data-label': 'Actions' } }">
         <template #body="{ data }">
           <div v-if="data.status === 'Pending'" class="actions">
-            <Button size="small" :pt="{ root: { class: 'act act-approve' } }"
-                    @click.stop="emit('approve', data)" icon="pi pi-check" v-tooltip.top="'Approve'" />
-            <Button size="small" :pt="{ root: { class: 'act act-reject' } }"
-                    @click.stop="emit('reject', data)" icon="pi pi-times" v-tooltip.top="'Reject'" />
+            <Button
+              size="small"
+              :pt="{ root: { class: 'act act-approve' } }"
+              @click.stop="emit('approve', data)"
+              icon="pi pi-check"
+              v-tooltip.top="'Approve'"
+            />
+            <Button
+              size="small"
+              :pt="{ root: { class: 'act act-reject' } }"
+              @click.stop="emit('reject', data)"
+              icon="pi pi-times"
+              v-tooltip.top="'Reject'"
+            />
           </div>
         </template>
       </Column>
@@ -138,7 +159,9 @@ reload();
 }
 .hairline {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   overflow: hidden;
   z-index: 1;
@@ -153,13 +176,26 @@ reload();
   animation: hairline-slide 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes hairline-slide {
-  0%   { left: -30%; }
-  100% { left: 100%; }
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hairline-bar { animation: none; left: 0; width: 100%; opacity: 0.4; }
+  .hairline-bar {
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.4;
+  }
 }
-.submitted { display: flex; flex-direction: column; gap: 2px; }
+.submitted {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .edited-pill {
   display: inline-block;
   padding: 1px 6px;
@@ -167,12 +203,16 @@ reload();
   color: var(--ink-secondary);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   border-radius: var(--radius-sm);
   align-self: flex-start;
 }
-.requester { display: flex; flex-direction: column; line-height: 1.2; }
+.requester {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
 .requester strong {
   font-family: var(--font-body);
   font-weight: 600;
@@ -183,13 +223,21 @@ reload();
   font-size: 11px;
   color: var(--ink-muted);
 }
-.cell-muted { color: var(--ink-secondary); }
-.actions { display: flex; gap: 6px; }
+.cell-muted {
+  color: var(--ink-secondary);
+}
+.actions {
+  display: flex;
+  gap: 6px;
+}
 .empty {
   text-align: center;
   padding: 40px 16px;
 }
-.empty-icon { font-size: 24px; color: var(--ink-muted); }
+.empty-icon {
+  font-size: 24px;
+  color: var(--ink-muted);
+}
 .empty-title {
   font-family: var(--font-display);
   font-style: italic;
@@ -206,7 +254,8 @@ reload();
 
 // Action buttons
 :deep(.act) {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-md);
   border: none;
   padding: 0;
@@ -215,12 +264,21 @@ reload();
   font-size: 13px;
   color: white;
 }
-:deep(.act-approve) { background: var(--secondary); }
-:deep(.act-reject)  { background: var(--status-rejected); }
-:deep(.act:hover) { filter: brightness(0.9); }
+:deep(.act-approve) {
+  background: var(--secondary);
+}
+:deep(.act-reject) {
+  background: var(--status-rejected);
+}
+:deep(.act:hover) {
+  filter: brightness(0.9);
+}
 
 // DataTable
-:deep(.p-datatable-table) { font-family: var(--font-body); font-size: 13px; }
+:deep(.p-datatable-table) {
+  font-family: var(--font-body);
+  font-size: 13px;
+}
 :deep(.p-datatable-thead > tr > th) {
   background: var(--surface-elevated);
   color: var(--ink-secondary);
@@ -232,14 +290,19 @@ reload();
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
-:deep(.p-datatable-tbody > tr) { background: transparent !important; cursor: pointer; }
+:deep(.p-datatable-tbody > tr) {
+  background: transparent !important;
+  cursor: pointer;
+}
 :deep(.p-datatable-tbody > tr > td) {
   padding: 14px 12px;
   border-bottom: 1px solid var(--border);
   color: var(--ink-primary);
   transition: background 120ms;
 }
-:deep(.p-datatable-tbody > tr:hover > td) { background: var(--surface-elevated); }
+:deep(.p-datatable-tbody > tr:hover > td) {
+  background: var(--surface-elevated);
+}
 :deep(.p-paginator) {
   background: transparent;
   padding: 16px 0 0;
@@ -273,10 +336,18 @@ reload();
 
 // Mobile card layout — transform table rows into cards below 768px
 @media (max-width: 767px) {
-  .card { padding: 12px; }
-  :deep(.p-datatable) { background: transparent; }
-  :deep(.p-datatable-thead) { display: none; }
-  :deep(.p-datatable-tbody) { display: block; }
+  .card {
+    padding: 12px;
+  }
+  :deep(.p-datatable) {
+    background: transparent;
+  }
+  :deep(.p-datatable-thead) {
+    display: none;
+  }
+  :deep(.p-datatable-tbody) {
+    display: block;
+  }
   :deep(.p-datatable-tbody > tr) {
     display: block;
     background: var(--surface-card) !important;
@@ -306,7 +377,7 @@ reload();
     font-family: var(--font-body);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-secondary);
     flex-shrink: 0;
