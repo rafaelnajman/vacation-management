@@ -8,6 +8,7 @@ import type {
   PaginatedVacations,
   VacationStats,
   DecideVacationDTO,
+  UpdateVacationDTO,
   Role,
 } from '@vacation/shared';
 
@@ -62,7 +63,11 @@ export class VacationsService {
       .leftJoinAndSelect('v.user', 'u')
       .orderBy('v.createdAt', 'DESC');
 
-    if (q.status) qb.andWhere('v.status = :status', { status: q.status });
+    if (q.status) {
+      qb.andWhere('v.status = :status', { status: q.status });
+    } else {
+      qb.andWhere(`v.status <> 'Cancelled'`);
+    }
     if (q.requesterId) qb.andWhere('v.userId = :rid', { rid: q.requesterId });
     if (q.requester) {
       qb.andWhere(
@@ -92,6 +97,7 @@ export class VacationsService {
       .createQueryBuilder('v')
       .select('v.status', 'status')
       .addSelect('COUNT(*)', 'count')
+      .where(`v.status IN ('Pending', 'Approved', 'Rejected')`)
       .groupBy('v.status')
       .getRawMany<{ status: 'Pending' | 'Approved' | 'Rejected'; count: string }>();
 
@@ -141,6 +147,78 @@ export class VacationsService {
 
       row.status = action;
       row.comments = dto.comments ?? null;
+      const saved = await repo.save(row);
+      return this.toDTO(saved);
+    });
+  }
+
+  async update(id: string, userId: string, dto: UpdateVacationDTO): Promise<VacationRequestDTO> {
+    return this.vacationRepo.manager.transaction(async manager => {
+      const repo = manager.getRepository(VacationRequest);
+      const row = await repo
+        .createQueryBuilder('v')
+        .setLock('pessimistic_write')
+        .where('v.id = :id', { id })
+        .getOne();
+
+      if (!row) throw AppError.notFound('Vacation request not found');
+      if (row.userId !== userId) throw AppError.notFound('Vacation request not found'); // 404, no leakage
+      if (row.status !== 'Pending') throw AppError.conflict(`Cannot edit a ${row.status.toLowerCase()} request`, 'NOT_PENDING');
+
+      // Determine the post-update date range for validation
+      const startDate = dto.startDate ?? row.startDate;
+      const endDate   = dto.endDate   ?? row.endDate;
+
+      // Future-only check (only when dates change)
+      if (dto.startDate || dto.endDate) {
+        const today = this.clock().toISOString().slice(0, 10);
+        if (startDate < today) {
+          throw AppError.badRequest('startDate cannot be in the past', 'START_IN_PAST');
+        }
+      }
+
+      // Overlap check (exclude the current request from the candidate set)
+      if (dto.startDate || dto.endDate) {
+        const overlap = await repo
+          .createQueryBuilder('v')
+          .where('v.userId = :uid', { uid: userId })
+          .andWhere('v.id <> :id', { id })
+          .andWhere(`v.status IN ('Pending', 'Approved')`)
+          .andWhere('v.startDate <= :end', { end: endDate })
+          .andWhere('v.endDate   >= :start', { start: startDate })
+          .getOne();
+
+        if (overlap) {
+          throw AppError.conflict(
+            'These dates overlap with another pending or approved request',
+            'OVERLAP',
+          );
+        }
+      }
+
+      row.startDate = startDate;
+      row.endDate   = endDate;
+      if (dto.reason !== undefined) row.reason = dto.reason ?? null;
+
+      const saved = await repo.save(row);
+      return this.toDTO(saved);
+    });
+  }
+
+  async cancel(id: string, userId: string): Promise<VacationRequestDTO> {
+    return this.vacationRepo.manager.transaction(async manager => {
+      const repo = manager.getRepository(VacationRequest);
+      const row = await repo
+        .createQueryBuilder('v')
+        .setLock('pessimistic_write')
+        .where('v.id = :id', { id })
+        .getOne();
+
+      if (!row) throw AppError.notFound('Vacation request not found');
+      if (row.userId !== userId) throw AppError.notFound('Vacation request not found');
+      if (row.status !== 'Pending') throw AppError.conflict(`Cannot cancel a ${row.status.toLowerCase()} request`, 'NOT_PENDING');
+
+      row.status = 'Cancelled';
       const saved = await repo.save(row);
       return this.toDTO(saved);
     });

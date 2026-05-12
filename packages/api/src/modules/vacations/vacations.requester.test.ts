@@ -124,6 +124,107 @@ describe('GET /api/vacation-requests/:id (requester)', () => {
   });
 });
 
+describe("PATCH /api/vacation-requests/:id (edit)", () => {
+  it("updates start/end/reason on the caller's own pending request", async () => {
+    const { user, token } = await makeUser({ role: 'Requester' });
+    const v = await makeVacation(user, {
+      startDate: '2099-07-01', endDate: '2099-07-05',
+      reason: 'old reason', status: 'Pending',
+    });
+    const res = await request(app)
+      .patch(`/api/vacation-requests/${v.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ startDate: '2099-07-03', endDate: '2099-07-08', reason: 'new reason' });
+    expect(res.status).toBe(200);
+    expect(res.body.startDate).toBe('2099-07-03');
+    expect(res.body.endDate).toBe('2099-07-08');
+    expect(res.body.reason).toBe('new reason');
+    expect(res.body.status).toBe('Pending');
+  });
+
+  it('rejects edit on a non-pending request (409)', async () => {
+    const { user, token } = await makeUser({ role: 'Requester' });
+    const v = await makeVacation(user, { status: 'Approved' });
+    const res = await request(app)
+      .patch(`/api/vacation-requests/${v.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ reason: 'changed mind' });
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe('NOT_PENDING');
+  });
+
+  it("returns 404 when editing another user's request (no leakage)", async () => {
+    const { user: other } = await makeUser({ role: 'Requester', email: 'other@example.com' });
+    const v = await makeVacation(other, {});
+    const { token } = await makeUser({ role: 'Requester', email: 'self@example.com' });
+    const res = await request(app)
+      .patch(`/api/vacation-requests/${v.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ reason: 'hijack attempt' });
+    expect(res.status).toBe(404);
+  });
+
+  it('overlap check excludes the request being edited', async () => {
+    // Editing a request to extend it shouldn't fail an overlap check against itself
+    const { user, token } = await makeUser({ role: 'Requester' });
+    const v = await makeVacation(user, {
+      startDate: '2099-08-01', endDate: '2099-08-05', status: 'Pending',
+    });
+    const res = await request(app)
+      .patch(`/api/vacation-requests/${v.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ endDate: '2099-08-08' });  // extends, overlaps with itself
+    expect(res.status).toBe(200);
+    expect(res.body.endDate).toBe('2099-08-08');
+  });
+
+  it('overlap check still catches overlap with OTHER own requests', async () => {
+    const { user, token } = await makeUser({ role: 'Requester' });
+    await makeVacation(user, { startDate: '2099-09-01', endDate: '2099-09-10', status: 'Pending' });
+    const target = await makeVacation(user, { startDate: '2099-10-01', endDate: '2099-10-05', status: 'Pending' });
+    const res = await request(app)
+      .patch(`/api/vacation-requests/${target.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ startDate: '2099-09-05', endDate: '2099-09-12' });  // overlaps with the first
+    expect(res.status).toBe(409);
+    expect(res.body.code).toBe('OVERLAP');
+  });
+});
+
+describe('POST /api/vacation-requests/:id/cancel', () => {
+  it("cancels a caller's own pending request and transitions to Cancelled", async () => {
+    const { user, token } = await makeUser({ role: 'Requester' });
+    const v = await makeVacation(user, {});
+    const res = await request(app)
+      .post(`/api/vacation-requests/${v.id}/cancel`)
+      .set('Authorization', `Bearer ${token}`)
+      .send();
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('Cancelled');
+  });
+
+  it('rejects cancel on a non-pending request (409)', async () => {
+    const { user, token } = await makeUser({ role: 'Requester' });
+    const v = await makeVacation(user, { status: 'Approved' });
+    const res = await request(app)
+      .post(`/api/vacation-requests/${v.id}/cancel`)
+      .set('Authorization', `Bearer ${token}`)
+      .send();
+    expect(res.status).toBe(409);
+  });
+
+  it("returns 404 when cancelling another user's request", async () => {
+    const { user: other } = await makeUser({ role: 'Requester', email: 'o2@example.com' });
+    const v = await makeVacation(other, {});
+    const { token } = await makeUser({ role: 'Requester', email: 's2@example.com' });
+    const res = await request(app)
+      .post(`/api/vacation-requests/${v.id}/cancel`)
+      .set('Authorization', `Bearer ${token}`)
+      .send();
+    expect(res.status).toBe(404);
+  });
+});
+
 describe('GET /api/vacation-requests/me', () => {
   it("returns only the caller's requests", async () => {
     const { user: alice, token: aliceToken } = await makeUser({ email: 'alice@example.com', role: 'Requester' });

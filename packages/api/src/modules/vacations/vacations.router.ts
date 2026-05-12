@@ -9,6 +9,7 @@ import {
   createVacationSchema,
   listVacationsQuerySchema,
   decideVacationSchema,
+  updateVacationSchema,
 } from '@vacation/shared';
 import type { ListVacationsQuery } from '@vacation/shared';
 
@@ -53,6 +54,31 @@ export function buildVacationsRouter() {
         const parsed = listVacationsQuerySchema.safeParse(req.query);
         if (!parsed.success) return next(parsed.error);
         const result = await service.listAll(parsed.data as ListVacationsQuery);
+        res.json(result);
+      } catch (e) { next(e); }
+    },
+  );
+
+  router.patch(
+    '/:id',
+    requireRole('Requester'),
+    validate(updateVacationSchema),
+    async (req, res, next) => {
+      try {
+        const id = req.params.id as string;
+        const result = await service.update(id, req.user!.id, req.body);
+        res.json(result);
+      } catch (e) { next(e); }
+    },
+  );
+
+  router.post(
+    '/:id/cancel',
+    requireRole('Requester'),
+    async (req, res, next) => {
+      try {
+        const id = req.params.id as string;
+        const result = await service.cancel(id, req.user!.id);
         res.json(result);
       } catch (e) { next(e); }
     },

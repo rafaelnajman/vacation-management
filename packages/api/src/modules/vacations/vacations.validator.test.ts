@@ -127,6 +127,42 @@ describe('GET /api/vacation-requests/stats', () => {
   });
 });
 
+describe('Cancelled handling for validators', () => {
+  it('GET /api/vacation-requests excludes Cancelled by default', async () => {
+    const { user: r } = await makeUser({ role: 'Requester' });
+    await makeVacation(r, { startDate: '2099-01-01', endDate: '2099-01-05', status: 'Pending' });
+    await makeVacation(r, { startDate: '2099-02-01', endDate: '2099-02-05', status: 'Cancelled' });
+    const { token } = await makeUser({ role: 'Validator' });
+    const res = await request(app)
+      .get('/api/vacation-requests')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body.total).toBe(1);
+    expect(res.body.items[0].status).toBe('Pending');
+  });
+
+  it('explicit status=Cancelled filter does return cancelled rows', async () => {
+    const { user: r } = await makeUser({ role: 'Requester' });
+    await makeVacation(r, { startDate: '2099-01-01', endDate: '2099-01-05', status: 'Cancelled' });
+    const { token } = await makeUser({ role: 'Validator' });
+    const res = await request(app)
+      .get('/api/vacation-requests?status=Cancelled')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body.total).toBe(1);
+    expect(res.body.items[0].status).toBe('Cancelled');
+  });
+
+  it('stats excludes Cancelled from all three counts', async () => {
+    const { user: r } = await makeUser({ role: 'Requester' });
+    await makeVacation(r, { status: 'Pending' });
+    await makeVacation(r, { startDate: '2099-02-01', endDate: '2099-02-05', status: 'Cancelled' });
+    const { token } = await makeUser({ role: 'Validator' });
+    const res = await request(app)
+      .get('/api/vacation-requests/stats')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body).toEqual({ pending: 1, approved: 0, rejected: 0 });
+  });
+});
+
 describe('POST /api/vacation-requests/:id/approve and /reject', () => {
   it('approves a pending request', async () => {
     const { user: r } = await makeUser({ role: 'Requester' });

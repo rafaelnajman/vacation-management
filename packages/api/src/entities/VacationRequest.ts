@@ -38,7 +38,7 @@ export class VacationRequest {
 
   @Column({
     type: 'enum',
-    enum: ['Pending', 'Approved', 'Rejected'] as const,
+    enum: ['Pending', 'Approved', 'Rejected', 'Cancelled'] as const,
     enumName: 'vacation_status',
     default: 'Pending',
   })

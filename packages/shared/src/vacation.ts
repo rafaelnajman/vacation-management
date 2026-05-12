@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-export type VacationStatus = 'Pending' | 'Approved' | 'Rejected';
+export type VacationStatus = 'Pending' | 'Approved' | 'Rejected' | 'Cancelled';
 
-export const vacationStatusSchema = z.enum(['Pending', 'Approved', 'Rejected']);
+export const vacationStatusSchema = z.enum(['Pending', 'Approved', 'Rejected', 'Cancelled']);
 
 // ISO YYYY-MM-DD date string
 const isoDate = z.iso.date();
@@ -23,6 +23,18 @@ export const decideVacationSchema = z.object({
   comments: z.string().trim().max(2000).optional(),
 });
 export type DecideVacationDTO = z.infer<typeof decideVacationSchema>;
+
+export const updateVacationSchema = z
+  .object({
+    startDate: isoDate.optional(),
+    endDate:   isoDate.optional(),
+    reason:    z.string().trim().max(1000).nullable().optional(),
+  })
+  .refine(
+    d => !(d.startDate && d.endDate) || d.endDate >= d.startDate,
+    { path: ['endDate'], message: 'endDate must be on or after startDate' },
+  );
+export type UpdateVacationDTO = z.infer<typeof updateVacationSchema>;
 
 export const listVacationsQuerySchema = z.object({
   status: vacationStatusSchema.optional(),
