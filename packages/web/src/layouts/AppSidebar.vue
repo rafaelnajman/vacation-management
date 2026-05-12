@@ -47,8 +47,8 @@ function handleNavClick() { emit('close'); }
     </button>
 
     <div class="brand">
-      <div class="brand-mark">Travelsk<span class="accent">i</span></div>
-      <div class="brand-sub">Operations</div>
+      <div class="brand-mark">Vacation<span class="accent">s</span></div>
+      <div class="brand-sub">Travelfactory</div>
     </div>
 
     <nav class="nav" aria-label="Primary">
@@ -68,7 +68,7 @@ function handleNavClick() { emit('close'); }
     <div class="dateline">
       <p class="dateline-date">{{ todayLabel }}</p>
       <div class="dateline-rule"></div>
-      <p class="dateline-label">TRAVELSKI · INTERNAL</p>
+      <p class="dateline-label">TRAVELFACTORY · INTERNAL</p>
     </div>
 
     <button class="logout" @click="logout">

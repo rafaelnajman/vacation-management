@@ -56,7 +56,7 @@ async function submit() {
   <section class="card rise">
     <header class="header">
       <h2 class="title">New request</h2>
-      <p class="subtitle"><em>Where to?</em></p>
+      <p class="subtitle">Select your dates.</p>
     </header>
 
     <form @submit.prevent="submit" class="form">
@@ -178,7 +178,7 @@ async function submit() {
   box-shadow: var(--ring);
 }
 
-// button — alpine pine CTA
+// button — forest green CTA
 :deep(.ce-btn-pine) {
   background: var(--secondary);
   color: white;

@@ -42,29 +42,23 @@ async function submit() {
   <div class="login-layout">
     <!-- Left panel: brand identity -->
     <div class="left-panel" aria-hidden="true">
-      <p class="micro-label">WINTER 2026 · TRAVELFACTORY</p>
+      <p class="micro-label">TRAVELFACTORY · INTERNAL</p>
 
-      <!-- Vertical slalom (md+) -->
-      <div class="wordmark wordmark-vertical" role="img" aria-label="Travelski">
-        <span class="wm-letter" style="transform: translateX(-32px) rotate(-1.5deg)">T</span>
-        <span class="wm-letter" style="transform: translateX(24px) rotate(2deg)">R</span>
-        <span class="wm-letter" style="transform: translateX(-18px) rotate(-2deg)">A</span>
-        <span class="wm-letter" style="transform: translateX(30px) rotate(1deg)">V</span>
-        <span class="wm-letter" style="transform: translateX(-22px) rotate(-1deg)">E</span>
-        <span class="wm-letter" style="transform: translateX(28px) rotate(1.5deg)">L</span>
-        <span class="wm-letter" style="transform: translateX(-30px) rotate(-1deg)">S</span>
-        <span class="wm-letter" style="transform: translateX(22px) rotate(2deg)">K</span>
-        <span class="wm-letter wm-accent" style="transform: translateX(-12px) rotate(0deg)">I</span>
-      </div>
-
-      <!-- Horizontal wordmark (mobile) -->
-      <div class="wordmark wordmark-horizontal" role="img" aria-label="Travelski">
-        <span>Travelsk</span><span class="wm-accent">i</span>
+      <div class="wordmark" role="img" aria-label="Vacations">
+        <span class="wm-letter" style="animation-delay: 0ms">V</span>
+        <span class="wm-letter" style="animation-delay: 60ms">a</span>
+        <span class="wm-letter" style="animation-delay: 120ms">c</span>
+        <span class="wm-letter" style="animation-delay: 180ms">a</span>
+        <span class="wm-letter" style="animation-delay: 240ms">t</span>
+        <span class="wm-letter" style="animation-delay: 300ms">i</span>
+        <span class="wm-letter" style="animation-delay: 360ms">o</span>
+        <span class="wm-letter" style="animation-delay: 420ms">n</span>
+        <span class="wm-letter wm-accent" style="animation-delay: 540ms">s</span>
       </div>
 
       <div class="left-rule"></div>
-      <p class="ops-label">OPERATIONS</p>
-      <p class="tagline"><em>Where to this season?</em></p>
+      <p class="ops-label">HUMAN RESOURCES</p>
+      <p class="tagline"><em>Plan your time off.</em></p>
     </div>
 
     <!-- Right panel: form -->
@@ -168,26 +162,37 @@ async function submit() {
   margin: 0;
 }
 
-.wordmark-vertical {
+.wordmark {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.wordmark-horizontal { display: none; }
-
-.wm-letter {
+  align-items: baseline;
   font-family: var(--font-display);
-  font-size: 60px;
   font-weight: 400;
-  line-height: 0.95;
+  font-size: 88px;
   color: var(--ink-on-inverse);
   letter-spacing: -0.015em;
-  display: block;
+  line-height: 1.0;
 }
 
-.wm-accent {
-  color: var(--accent);
+.wm-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: wm-fade-up 540ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.wm-accent { color: var(--accent); }
+
+@keyframes wm-fade-up {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-letter {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .left-rule {
@@ -410,8 +415,8 @@ async function submit() {
 }
 
 /* ── Tablet md (768–1023px): reduce wordmark size ──────── */
-@media (max-width: 1023px) and (min-width: 768px) {
-  .wm-letter { font-size: 48px !important; }
+@media (max-width: 1023px) {
+  .wordmark { font-size: 64px; }
 }
 
 /* ── Mobile (<768px) ────────────────────────────────────── */
@@ -435,25 +440,13 @@ async function submit() {
     font-size: 9px;
   }
 
-  .wordmark-vertical { display: none; }
-
-  .wordmark-horizontal {
-    display: flex;
-    align-items: baseline;
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 36px;
-    color: var(--ink-on-inverse);
-    letter-spacing: -0.015em;
-    line-height: 1.0;
-  }
-
-  .left-rule { display: none; }
+  .wordmark { font-size: 44px; }
   .ops-label { display: none; }
+  .left-rule { display: none; }
 
   .tagline {
-    margin-top: 8px;
     font-size: 13px;
+    opacity: 0.6;
   }
 
   .right-panel {
@@ -471,6 +464,6 @@ async function submit() {
 /* ── xs phones (<480px) ─────────────────────────────────── */
 @media (max-width: 479px) {
   .login-layout { grid-template-rows: 140px 1fr; }
-  .wordmark-horizontal { font-size: 28px; }
+  .wordmark { font-size: 36px; }
 }
 </style>

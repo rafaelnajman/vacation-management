@@ -144,7 +144,7 @@ Frontend tests are intentionally out of scope — given a fixed time budget, dee
 - **TypeORM (not Sequelize)** — the brief mandates TypeORM. Sequelize is more popular in JS land but the brief was clear.
 - **JWT (not a "user switcher")** — real authentication with role gating produces real RBAC behavior and is more representative of production code.
 - **UUID primary keys** — non-enumerable, professional, `gen_random_uuid()` is built into Postgres 16.
-- **PrimeVue (Aura preset)** — its DataTable handles the validator dashboard's sorting/filtering/pagination natively. Aura provides accessibility scaffolding for free; visual styling is then overridden via the pass-through (`pt`) API to match the project's design language.
+- **PrimeVue (Aura preset)** — its DataTable handles the validator dashboard's sorting/filtering/pagination natively. Aura provides accessibility scaffolding for free; visual styling is then overridden via the pass-through (`pt`) API. Distinctive type pairing was a conscious choice over PrimeVue Aura defaults to differentiate the visual presentation.
 - **No Tailwind, no Bootstrap** — both add a separate styling vocabulary that doesn't earn its keep in a focused app. Layout tokens live in `_tokens.scss` and component styles are scoped SCSS inside SFCs.
 - **POST sub-resources for approve/reject** (`/:id/approve`, `/:id/reject`) — clearer intent than `PATCH /:id` with a `status` field; per-action authorisation and idempotency rules are explicit.
 - **DB-level CHECK constraint on dates** — bad data states are unrepresentable in the database, not just rejected at the API.
@@ -154,7 +154,12 @@ Frontend tests are intentionally out of scope — given a fixed time budget, dee
 
 ## Visual design notes
 
-The frontend commits to a **"Coastal Editorial"** visual direction — a refined, magazine-feeling admin: warm paper background (`#FBF8F2`), terracotta accent (`#C8553D`), Fraunces serif display + Manrope body. The deliberate 2px navy rule under the topbar is the signature element. Status colors are muted earthy versions (mustard / sage / clay) rather than stock alert palette. This was a conscious choice over the default PrimeVue Aura theme — the goal was visual intentionality and differentiation from the typical "Inter on white" admin UI.
+Type pairing: DM Serif Display (display) + Manrope (body) — a refined editorial pairing
+that signals "thoughtful internal tool" rather than generic admin dashboard. Palette:
+deep ink on cool snowpack with a single confident blue accent, plus muted period tones
+for status (ochre / forest green / brick red) so the alerts don't overwhelm the data.
+All component styling overrides PrimeVue Aura via the pass-through (pt) API to keep
+Aura's accessibility scaffolding while replacing its visual language.
 
 ## Known limitations
 

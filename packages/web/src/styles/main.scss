@@ -18,11 +18,11 @@ body::before {
   content: "";
   position: fixed; inset: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' fill='none' stroke='%230A0E14' stroke-width='0.5' opacity='0.04'><path d='M0,400 Q150,360 300,400 T600,400'/><path d='M0,320 Q150,260 300,320 T600,320'/><path d='M0,240 Q150,180 300,240 T600,240'/><path d='M0,160 Q150,100 300,160 T600,160'/><path d='M0,480 Q150,440 300,480 T600,480'/></svg>");
-  background-size: 800px 800px;
-  background-repeat: repeat;
+  background-image: radial-gradient(circle, rgba(10, 14, 20, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
   z-index: 9999;
   mix-blend-mode: multiply;
+  opacity: 0.4;
 }
 
 h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.015em; }

@@ -51,7 +51,7 @@ async function seed() {
       reason: 'Summer holiday',
       status: 'Pending',
     },
-    // Carol — 1 Pending (mid-summer), 1 Approved (winter, ski trip)
+    // Carol — 1 Pending (mid-summer), 1 Approved (winter holiday)
     {
       email: 'carol@example.com',
       startDate: '2026-07-14', endDate: '2026-07-21',
@@ -61,7 +61,7 @@ async function seed() {
     {
       email: 'carol@example.com',
       startDate: '2026-12-22', endDate: '2026-12-31',
-      reason: 'Family ski trip to Chamonix',
+      reason: 'Family holiday abroad',
       status: 'Approved',
     },
     // Daniel — 1 Pending (early autumn), 1 Rejected (overlap with team launch)
