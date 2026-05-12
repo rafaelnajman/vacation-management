@@ -1,17 +1,64 @@
 <script setup lang="ts">
-defineProps<{
+import { ref, watch, onBeforeUnmount } from 'vue';
+
+const props = defineProps<{
   label: string;
   count: number;
   icon: string;
   active: boolean;
 }>();
 defineEmits<{ (e: 'click'): void }>();
+
+const displayCount = ref(0);
+
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+let rafId: number | null = null;
+
+function animateTo(target: number) {
+  if (rafId !== null) cancelAnimationFrame(rafId);
+  const start = displayCount.value;
+  const delta = target - start;
+  const duration = 700;
+  const startTime = performance.now();
+  function step(now: number) {
+    const elapsed = now - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    const eased = easeOutCubic(t);
+    displayCount.value = Math.round(start + delta * eased);
+    if (t < 1) {
+      rafId = requestAnimationFrame(step);
+    } else {
+      rafId = null;
+    }
+  }
+  rafId = requestAnimationFrame(step);
+}
+
+const prefersReducedMotion =
+  typeof window !== 'undefined' &&
+  window.matchMedia &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+watch(() => props.count, (n) => {
+  if (prefersReducedMotion) displayCount.value = n;
+  else animateTo(n);
+}, { immediate: true });
+
+onBeforeUnmount(() => {
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+});
 </script>
 
 <template>
   <button :class="['stat', { active }]" type="button" @click="$emit('click')">
     <i :class="['icon', icon]" aria-hidden="true" />
-    <div class="number">{{ count }}</div>
+    <div class="number">{{ displayCount }}</div>
     <div class="anchor-bar"></div>
     <div class="label">{{ label }}</div>
   </button>

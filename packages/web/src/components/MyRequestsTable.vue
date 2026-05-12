@@ -33,6 +33,9 @@ function days(start: string, end: string) {
 
 <template>
   <section class="card rise">
+    <div v-show="loading" class="hairline" aria-hidden="true">
+      <div class="hairline-bar" />
+    </div>
     <header class="header">
       <h2 class="title">My requests</h2>
       <p class="subtitle">Most recent first.</p>
@@ -84,11 +87,35 @@ function days(start: string, end: string) {
 
 <style scoped lang="scss">
 .card {
+  position: relative;
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   padding: 32px;
   min-width: 0; // prevent grid blowout
+}
+.hairline {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  overflow: hidden;
+  z-index: 1;
+}
+.hairline-bar {
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: hairline-slide 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes hairline-slide {
+  0%   { left: -30%; }
+  100% { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hairline-bar { animation: none; left: 0; width: 100%; opacity: 0.4; }
 }
 .header { margin-bottom: 20px; }
 .title {

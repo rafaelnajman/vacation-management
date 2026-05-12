@@ -5,6 +5,7 @@ import StatsCard from '@/components/StatsCard.vue';
 import RequestTable from '@/components/RequestTable.vue';
 import RejectModal from '@/components/RejectModal.vue';
 import RequestDetailPanel from '@/components/RequestDetailPanel.vue';
+import DecisionStamp from '@/components/DecisionStamp.vue';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import DatePicker from 'primevue/datepicker';
@@ -28,6 +29,14 @@ const stats = ref<VacationStats>({ pending: 0, approved: 0, rejected: 0 });
 const showRejectModal = ref(false);
 const rejectTarget = ref<VacationRequestDTO | null>(null);
 const detailId = ref<string | null>(null);
+const stampDecision = ref<'Approved' | 'Rejected' | null>(null);
+const stampVisible = ref(false);
+
+function showStamp(decision: 'Approved' | 'Rejected') {
+  stampDecision.value = decision;
+  stampVisible.value = true;
+  setTimeout(() => { stampVisible.value = false; }, 720);
+}
 
 const statusOptions = [
   { label: 'All',      value: null },
@@ -78,6 +87,7 @@ async function approve(row: VacationRequestDTO) {
     accept: async () => {
       try {
         await vacationsApi.approve(row.id);
+        showStamp('Approved');
         toast.success('Request approved');
         await refresh();
       } catch (e) { toast.apiError(e); }
@@ -95,6 +105,7 @@ async function confirmReject(comments: string) {
   showRejectModal.value = false;
   try {
     await vacationsApi.reject(rejectTarget.value.id, { comments });
+    showStamp('Rejected');
     toast.success('Request rejected');
     await refresh();
   } catch (e) { toast.apiError(e); }
@@ -148,13 +159,17 @@ onMounted(loadStats);
 
       <RejectModal v-model:visible="showRejectModal" @confirm="confirmReject" />
 
+      <DecisionStamp :visible="stampVisible" :decision="stampDecision" />
+
       <RequestDetailPanel :id="detailId" @close="detailId = null" @updated="refresh" />
 
       <footer class="page-footer rise">
         <span class="dot" aria-hidden="true">·</span>
-        TRAVELFACTORY · INTERNAL
+        TRAVELFACTORY
         <span class="dot" aria-hidden="true">·</span>
-        46.0°N 6.9°E
+        INTERNAL
+        <span class="dot" aria-hidden="true">·</span>
+        VACATION MANAGEMENT
       </footer>
     </div>
   </AppShell>

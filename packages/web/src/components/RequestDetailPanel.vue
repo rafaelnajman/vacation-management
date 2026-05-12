@@ -5,6 +5,7 @@ import Button from 'primevue/button';
 import { useConfirm } from 'primevue/useconfirm';
 import StatusBadge from './StatusBadge.vue';
 import RejectModal from './RejectModal.vue';
+import DecisionStamp from './DecisionStamp.vue';
 import { vacationsApi } from '@/services/vacationsApi';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
@@ -19,6 +20,15 @@ const emit = defineEmits<{
 const auth = useAuthStore();
 const confirm = useConfirm();
 const toast = useToast();
+
+const stampDecision = ref<'Approved' | 'Rejected' | null>(null);
+const stampVisible = ref(false);
+
+function showStamp(decision: 'Approved' | 'Rejected') {
+  stampDecision.value = decision;
+  stampVisible.value = true;
+  setTimeout(() => { stampVisible.value = false; }, 720);
+}
 
 const visible = computed({
   get: () => !!props.id,
@@ -78,6 +88,7 @@ function approve() {
     accept: async () => {
       try {
         await vacationsApi.approve(row.id);
+        showStamp('Approved');
         toast.success('Request approved');
         emit('updated');
         emit('close');
@@ -93,6 +104,7 @@ async function confirmReject(comments: string) {
   showRejectModal.value = false;
   try {
     await vacationsApi.reject(data.value.id, { comments });
+    showStamp('Rejected');
     toast.success('Request rejected');
     emit('updated');
     emit('close');
@@ -104,6 +116,7 @@ async function confirmReject(comments: string) {
   <Drawer
     v-model:visible="visible"
     position="right"
+    :style="{ width: 'min(480px, 100vw)' }"
     :pt="{
       root: { class: 'ce-drawer' },
       header: { class: 'ce-drawer-header' },
@@ -163,23 +176,20 @@ async function confirmReject(comments: string) {
     </div>
 
     <RejectModal v-model:visible="showRejectModal" @confirm="confirmReject" />
+    <DecisionStamp :visible="stampVisible" :decision="stampDecision" />
   </Drawer>
 </template>
 
 <style scoped lang="scss">
 :deep(.ce-drawer) {
-  width: 480px;
   background: var(--surface-card);
   font-family: var(--font-body);
-}
-
-@media (max-width: 767px) {
-  :deep(.ce-drawer) { width: 100% !important; }
 }
 :deep(.ce-drawer-header) {
   padding: 0;
   border: none;
-  background: var(--ink-primary);
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border);
 }
 :deep(.ce-drawer-content) { padding: 0; }
 :deep(.ce-drawer-mask) { background: rgba(10, 14, 20, 0.55); }
@@ -194,7 +204,7 @@ async function confirmReject(comments: string) {
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 400;
-  color: var(--ink-on-inverse);
+  color: var(--ink-primary);
   margin: 0;
   line-height: 1.2;
   letter-spacing: -0.01em;
