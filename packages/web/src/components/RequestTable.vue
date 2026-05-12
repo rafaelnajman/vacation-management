@@ -45,6 +45,13 @@ function onRowClick(e: { data: VacationRequestDTO }) {
   emit('row-click', e.data);
 }
 
+function wasEdited(row: { createdAt: string; updatedAt: string; status: string }) {
+  // If it's been decided/cancelled, updatedAt reflects that transition, not an edit. Show only on Pending.
+  if (row.status !== 'Pending') return false;
+  const delta = new Date(row.updatedAt).getTime() - new Date(row.createdAt).getTime();
+  return delta > 60_000; // 60 seconds threshold
+}
+
 defineExpose({ reload });
 reload();
 </script>
@@ -100,7 +107,12 @@ reload();
         <template #body="{ data }"><StatusBadge :status="data.status" /></template>
       </Column>
       <Column field="createdAt" header="Submitted" :pt="{ bodyCell: { 'data-label': 'Submitted' } }">
-        <template #body="{ data }">{{ new Date(data.createdAt).toLocaleDateString() }}</template>
+        <template #body="{ data }">
+          <div class="submitted">
+            <span>{{ new Date(data.createdAt).toLocaleDateString() }}</span>
+            <span v-if="wasEdited(data)" class="edited-pill" title="This request was edited after submission">edited</span>
+          </div>
+        </template>
       </Column>
       <Column header="Actions" style="width: 160px" :pt="{ bodyCell: { 'data-label': 'Actions' } }">
         <template #body="{ data }">
@@ -146,6 +158,19 @@ reload();
 }
 @media (prefers-reduced-motion: reduce) {
   .hairline-bar { animation: none; left: 0; width: 100%; opacity: 0.4; }
+}
+.submitted { display: flex; flex-direction: column; gap: 2px; }
+.edited-pill {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--surface-elevated);
+  color: var(--ink-secondary);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  align-self: flex-start;
 }
 .requester { display: flex; flex-direction: column; line-height: 1.2; }
 .requester strong {

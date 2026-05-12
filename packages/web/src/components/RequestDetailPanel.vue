@@ -5,6 +5,7 @@ import Button from 'primevue/button';
 import { useConfirm } from 'primevue/useconfirm';
 import StatusBadge from './StatusBadge.vue';
 import RejectModal from './RejectModal.vue';
+import EditRequestModal from './EditRequestModal.vue';
 import DecisionStamp from './DecisionStamp.vue';
 import { vacationsApi } from '@/services/vacationsApi';
 import { useAuthStore } from '@/stores/auth';
@@ -23,6 +24,7 @@ const toast = useToast();
 
 const stampDecision = ref<'Approved' | 'Rejected' | null>(null);
 const stampVisible = ref(false);
+const showEditModal = ref(false);
 
 function showStamp(decision: 'Approved' | 'Rejected') {
   stampDecision.value = decision;
@@ -76,6 +78,13 @@ const canDecide = computed(() =>
   auth.role === 'Validator' && data.value?.status === 'Pending'
 );
 
+// Requester can edit/cancel their own pending request
+const canEditOrCancel = computed(() =>
+  auth.role === 'Requester' &&
+  data.value?.status === 'Pending' &&
+  data.value?.userId === auth.user?.id
+);
+
 function approve() {
   if (!data.value) return;
   const row = data.value;
@@ -109,6 +118,37 @@ async function confirmReject(comments: string) {
     emit('updated');
     emit('close');
   } catch (e) { toast.apiError(e); }
+}
+
+function openEdit() { showEditModal.value = true; }
+
+async function onEdited() {
+  // Refresh the panel's data after a save
+  if (data.value?.id) await load(data.value.id);
+  emit('updated');
+}
+
+function confirmCancel() {
+  if (!data.value) return;
+  const target = data.value;
+  confirm.require({
+    message: `Cancel this request? It will be marked as Cancelled and removed from the validator's queue.`,
+    header: 'Cancel this request?',
+    icon: 'pi pi-times-circle',
+    acceptLabel: 'Cancel request',
+    rejectLabel: 'Keep request',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        await vacationsApi.cancel(target.id);
+        toast.success('Request cancelled');
+        emit('updated');
+        emit('close');
+      } catch (e) {
+        toast.apiError(e);
+      }
+    },
+  });
 }
 </script>
 
@@ -163,7 +203,7 @@ async function confirmReject(comments: string) {
         <div v-if="data.status !== 'Pending'" class="event">
           <span class="dot" aria-hidden="true"></span>
           <div>
-            <div class="event-lbl">{{ data.status === 'Approved' ? 'Approved' : 'Rejected' }}</div>
+            <div class="event-lbl">{{ data.status === 'Approved' ? 'Approved' : data.status === 'Rejected' ? 'Rejected' : 'Cancelled' }}</div>
             <div class="event-date">{{ fmtTimestamp(data.updatedAt) }}</div>
           </div>
         </div>
@@ -173,9 +213,25 @@ async function confirmReject(comments: string) {
         <Button label="Reject" :pt="{ root: { class: 'ce-btn-danger' } }" @click="openReject" />
         <Button label="Approve" :pt="{ root: { class: 'ce-btn-pine' } }" @click="approve" />
       </footer>
+
+      <footer v-else-if="canEditOrCancel" class="actions">
+        <Button
+          label="Cancel request"
+          icon="pi pi-times-circle"
+          :pt="{ root: { class: 'ce-btn-cancel-request' } }"
+          @click="confirmCancel"
+        />
+        <Button
+          label="Edit"
+          icon="pi pi-pencil"
+          :pt="{ root: { class: 'ce-btn-primary' } }"
+          @click="openEdit"
+        />
+      </footer>
     </div>
 
     <RejectModal v-model:visible="showRejectModal" @confirm="confirmReject" />
+    <EditRequestModal v-model:visible="showEditModal" :request="data" @updated="onEdited" />
     <DecisionStamp :visible="stampVisible" :decision="stampDecision" />
   </Drawer>
 </template>
@@ -333,4 +389,40 @@ async function confirmReject(comments: string) {
   cursor: pointer;
 }
 :deep(.ce-btn-danger:hover) { filter: brightness(0.95); }
+
+:deep(.ce-btn-cancel-request) {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--ink-secondary);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+:deep(.ce-btn-cancel-request:hover) {
+  border-color: var(--status-rejected);
+  color: var(--status-rejected);
+  background: var(--surface-elevated);
+}
+
+:deep(.ce-btn-primary) {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+:deep(.ce-btn-primary:hover) { background: var(--accent-hover); }
 </style>

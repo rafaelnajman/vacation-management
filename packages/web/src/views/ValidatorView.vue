@@ -20,7 +20,7 @@ const confirm = useConfirm();
 const tableRef = ref<InstanceType<typeof RequestTable> | null>(null);
 
 const filters = reactive<{
-  status: 'Pending' | 'Approved' | 'Rejected' | null;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled' | null;
   requester: string;
   range: Date[] | null;
 }>({ status: null, requester: '', range: null });
@@ -39,10 +39,11 @@ function showStamp(decision: 'Approved' | 'Rejected') {
 }
 
 const statusOptions = [
-  { label: 'All',      value: null },
-  { label: 'Pending',  value: 'Pending' },
-  { label: 'Approved', value: 'Approved' },
-  { label: 'Rejected', value: 'Rejected' },
+  { label: 'All',       value: null },
+  { label: 'Pending',   value: 'Pending' },
+  { label: 'Approved',  value: 'Approved' },
+  { label: 'Rejected',  value: 'Rejected' },
+  { label: 'Cancelled', value: 'Cancelled' },
 ];
 
 function fmt(d: Date) {

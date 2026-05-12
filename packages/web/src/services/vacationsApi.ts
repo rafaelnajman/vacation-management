@@ -3,6 +3,7 @@ import type {
   DecideVacationDTO,
   ListVacationsQuery,
   PaginatedVacations,
+  UpdateVacationDTO,
   VacationRequestDTO,
   VacationStats,
 } from '@vacation/shared';
@@ -21,4 +22,8 @@ export const vacationsApi = {
     http.post<VacationRequestDTO>(`/vacation-requests/${id}/approve`, dto).then(r => r.data),
   reject:   (id: string, dto: DecideVacationDTO = {}) =>
     http.post<VacationRequestDTO>(`/vacation-requests/${id}/reject`, dto).then(r => r.data),
+  update: (id: string, dto: UpdateVacationDTO) =>
+    http.patch<VacationRequestDTO>(`/vacation-requests/${id}`, dto).then(r => r.data),
+  cancel: (id: string) =>
+    http.post<VacationRequestDTO>(`/vacation-requests/${id}/cancel`).then(r => r.data),
 };
