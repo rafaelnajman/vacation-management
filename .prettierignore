@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+coverage/
+docs/superpowers/
+package-lock.json
+*.min.js
+*.min.css
+.DS_Store

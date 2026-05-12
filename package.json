@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "setup": "test -f .env || cp .env.example .env; npm install && docker compose up -d --build --wait && npm run seed",
     "seed": "docker compose exec -T api node /app/packages/api/dist/packages/api/scripts/seed.js",
@@ -13,7 +15,14 @@
     "dev:api": "npm run dev --workspace=@vacation/api",
     "test:api": "npm test --workspace=@vacation/api",
     "lint": "npm run lint --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,vue,scss,css,json,md,yml,yaml,html}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,vue,scss,css,json,md,yml,yaml,html}\" --ignore-path .prettierignore"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.0"
+  }
 }
