@@ -48,16 +48,18 @@ That's it. `npm run setup` is idempotent — safe to run again. It takes ~30s fr
 
 Other useful scripts:
 
-| Command              | What it does                                                |
-| -------------------- | ----------------------------------------------------------- |
-| `npm run setup`      | One-shot: install + Docker up + seed                        |
-| `npm run stack:up`   | Just (re)build and start db + api                           |
-| `npm run stack:down` | Stop the Docker stack                                       |
-| `npm run seed`       | Re-run the seed against the running stack (idempotent)      |
-| `npm run dev:web`    | Vite dev server for the frontend                            |
-| `npm run dev:api`    | Run the API locally with hot-reload (instead of via Docker) |
-| `npm run test:api`   | Run the backend test suite                                  |
-| `npm run typecheck`  | Typecheck all workspaces                                    |
+| Command                | What it does                                                |
+| ---------------------- | ----------------------------------------------------------- |
+| `npm run setup`        | One-shot: install + Docker up + seed                        |
+| `npm run stack:up`     | Just (re)build and start db + api                           |
+| `npm run stack:down`   | Stop the Docker stack                                       |
+| `npm run seed`         | Re-run the seed against the running stack (idempotent)      |
+| `npm run dev:web`      | Vite dev server for the frontend                            |
+| `npm run dev:api`      | Run the API locally with hot-reload (instead of via Docker) |
+| `npm run test:api`     | Run the backend test suite                                  |
+| `npm run typecheck`    | Typecheck all workspaces                                    |
+| `npm run format`       | Run Prettier on all source files                            |
+| `npm run format:check` | Verify all source files are Prettier-clean (good for CI)    |
 
 > **macOS note:** If `curl http://localhost:3000` fails but `curl http://127.0.0.1:3000` succeeds, that's the macOS IPv6/Docker quirk. The Vite dev proxy uses `localhost` internally and works fine; only direct CLI requests to the API container hit this.
 
