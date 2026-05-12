@@ -1,0 +1,76 @@
+:root {
+  // Surfaces — cool snowpack white, paired with the glacial-blue accent
+  --surface-page:      #EEF0F3;  // cool bone with the faintest blue undertone
+  --surface-card:      #FFFFFF;
+  --surface-elevated:  #E6EAEF;  // hover wash
+  --surface-inverse:   #0A0E14;  // deep ink — used on dark panels (login left side, modal headers)
+
+  // Ink
+  --ink-primary:       #0A0E14;
+  --ink-secondary:     #5C6470;
+  --ink-muted:         #9CA3AD;
+  --ink-on-inverse:    #F5F2EB;  // text on dark panels
+
+  // Accent — glacial blue (clear alpine sky, vintage ski-resort branding, Swiss railway signage)
+  --accent:            #1E5B8C;
+  --accent-hover:      #16487A;
+  --accent-soft:       #E0EBF4;  // tinted background
+
+  // Secondary accent — alpine pine (used for approved status and secondary CTAs)
+  --secondary:         #0B5E5B;
+  --secondary-soft:    #DDEAE6;
+
+  // Status — vintage poster palette, not stock alert palette
+  --status-pending:    #C39448;  // ochre
+  --status-pending-bg: #F4E9D2;
+  --status-approved:   #0B5E5B;  // alpine pine
+  --status-approved-bg:#DDEAE6;
+  --status-rejected:   #A8123D;  // vintage poster red
+  --status-rejected-bg:#F4DCE2;
+
+  // Borders, rules
+  --border:            #D8DBDF;
+  --border-strong:     #B9BFC6;
+  --rule:              #0A0E14;  // editorial rule is ink-black — the strongest line
+
+  // Focus ring
+  --ring:              0 0 0 3px rgba(30, 91, 140, 0.20);
+
+  // Typography
+  --font-display: 'DM Serif Display', 'Times New Roman', serif;
+  --font-body:    'Manrope', -apple-system, system-ui, sans-serif;
+
+  // Radii (also available as SCSS vars below)
+  --radius-sm:   3px;
+  --radius-md:   6px;
+  --radius-card: 4px;
+  --radius-pill: 999px;
+}
+
+// Type scale
+$type-display-xl: 64px;  // stat numbers
+$type-display-lg: 44px;  // page H1
+$type-display-md: 28px;  // section H2
+$type-heading:    18px;  // card titles
+$type-body:       14px;  // default
+$type-small:      12px;  // labels, meta
+$type-micro:      10px;  // tracked uppercase labels
+$line-tight:      1.05;
+$line-default:    1.5;
+
+// Spacing scale
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 56px;
+
+// Radii
+$radius-sm:   3px;
+$radius-md:   6px;
+$radius-card: 4px;
+$radius-pill: 999px;
