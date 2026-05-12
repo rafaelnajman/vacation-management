@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vacations
+      POSTGRES_USER: vacations
+      POSTGRES_PASSWORD: vacations
+    ports: ["5432:5432"]
+    volumes: ["db-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vacations -d vacations"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    environment:
+      DATABASE_URL: postgres://vacations:vacations@db:5432/vacations
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-real-deployments-min-16-chars}
+      JWT_EXPIRES_IN: 24h
+      BCRYPT_ROUNDS: "10"
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      PORT: "3000"
+      NODE_ENV: production
+    ports: ["3000:3000"]
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        node dist/packages/api/scripts/run-migrations.js &&
+        node --enable-source-maps dist/packages/api/src/index.js
+      "
+
+volumes:
+  db-data:
