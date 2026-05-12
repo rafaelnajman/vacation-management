@@ -5,6 +5,10 @@
   "type": "module",
   "workspaces": ["packages/*"],
   "scripts": {
+    "setup": "test -f .env || cp .env.example .env; npm install && docker compose up -d --build --wait && npm run seed",
+    "seed": "docker compose exec -T api node /app/packages/api/dist/packages/api/scripts/seed.js",
+    "stack:up": "docker compose up -d --build --wait",
+    "stack:down": "docker compose down",
     "dev:web": "npm run dev --workspace=@vacation/web",
     "dev:api": "npm run dev --workspace=@vacation/api",
     "test:api": "npm test --workspace=@vacation/api",

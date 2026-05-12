@@ -10,40 +10,51 @@ A two-interface vacation request management system built for the Travelfactory w
 ### Requester
 - Submit vacation requests with start/end dates and an optional reason.
 - View own requests in a paginated table with live status.
+- **Edit** a still-pending request from the detail drawer.
+- **Cancel** a pending request (transitions to `Cancelled`, removed from the validator's queue).
 - Inline form validation reusing the same Zod schemas the API uses (single source of truth).
 
 ### Validator
 - Stats dashboard with clickable filter cards (Pending / Approved / Rejected).
-- Filter all requests by status, requester id, and date range.
+- Filter all requests by status, requester name/email, and date range.
 - Approve via confirm dialog; reject via modal with a required reason (UI-enforced).
+- A small "edited" pill appears next to the submitted date when a Pending request was modified after submission.
 - Paginated, sortable, lazy-loaded table.
 
 ### Cross-cutting
 - JWT-based authentication, role-aware route guards.
-- Overlap detection on submit (cannot submit a pending/approved request overlapping the requester's existing ones).
+- Overlap detection on submit and on edit (cannot submit/extend a pending/approved request overlapping the requester's existing ones; editing excludes the row being edited from the candidate set).
 - DB-level CHECK constraint enforces `end_date >= start_date`.
 - Same Zod schemas used to validate input on both the client and the server.
+- Click-row detail drawer with submitted/decided timeline and inline actions.
+- Decision stamp animation (passport-style "APPROVED"/"REJECTED" overlay) when a validator decides.
 
 ## Quick start
 
 ```bash
 git clone <repo>
 cd vacation-management
-cp .env.example .env
 
-# Start db + api in Docker
-docker compose up -d --build
-
-# Seed two demo users
-docker compose exec api node /app/packages/api/dist/packages/api/scripts/seed.js
-
-# Install workspace deps and start the frontend
-npm install
-npm run dev --workspace=@vacation/web
-# open the URL Vite prints (default: http://localhost:5173 or 5174)
+npm run setup       # copies .env, installs deps, brings up db+api in Docker, runs migrations, seeds demo data
+npm run dev:web     # starts the frontend at http://localhost:5173 (or :5174 if 5173 is taken)
 ```
 
-Prerequisites: Docker, Node 22 LTS or newer.
+That's it. `npm run setup` is idempotent — safe to run again. It takes ~30s from a cold start.
+
+**Prerequisites:** Docker (with the Compose plugin), Node 22 LTS or newer.
+
+Other useful scripts:
+
+| Command | What it does |
+|---|---|
+| `npm run setup` | One-shot: install + Docker up + seed |
+| `npm run stack:up` | Just (re)build and start db + api |
+| `npm run stack:down` | Stop the Docker stack |
+| `npm run seed` | Re-run the seed against the running stack (idempotent) |
+| `npm run dev:web` | Vite dev server for the frontend |
+| `npm run dev:api` | Run the API locally with hot-reload (instead of via Docker) |
+| `npm run test:api` | Run the backend test suite |
+| `npm run typecheck` | Typecheck all workspaces |
 
 > **macOS note:** If `curl http://localhost:3000` fails but `curl http://127.0.0.1:3000` succeeds, that's the macOS IPv6/Docker quirk. The Vite dev proxy uses `localhost` internally and works fine; only direct CLI requests to the API container hit this.
 
@@ -56,6 +67,8 @@ Prerequisites: Docker, Node 22 LTS or newer.
 | `daniel@example.com`   | `Demo123!`        | Requester  |
 | `elena@example.com`    | `Demo123!`        | Requester  |
 | `bob@example.com`      | `Validator123!`   | Validator  |
+
+The seed also creates 7 vacation requests spread across Pending / Approved / Rejected so the validator dashboard demos with real-feeling data.
 
 ## Architecture
 
@@ -89,25 +102,28 @@ The backend deliberately demonstrates standard OOP and design patterns:
 
 ## API documentation
 
-| Method | Path                                          | Auth | Role        | Description                                       |
-|--------|-----------------------------------------------|------|-------------|---------------------------------------------------|
-| POST   | `/api/auth/register`                          | –    | –           | Create account + return JWT.                      |
-| POST   | `/api/auth/login`                             | –    | –           | Login + return JWT.                               |
-| GET    | `/api/auth/me`                                | JWT  | any         | Return the current user.                          |
-| POST   | `/api/vacation-requests`                      | JWT  | Requester   | Submit a request.                                 |
-| GET    | `/api/vacation-requests/me`                   | JWT  | Requester   | List the caller's requests.                       |
-| GET    | `/api/vacation-requests`                      | JWT  | Validator   | Paginated list with filters.                      |
-| GET    | `/api/vacation-requests/stats`                | JWT  | Validator   | Counts grouped by status.                         |
-| POST   | `/api/vacation-requests/:id/approve`          | JWT  | Validator   | Approve a Pending request.                        |
-| POST   | `/api/vacation-requests/:id/reject`           | JWT  | Validator   | Reject a Pending request.                         |
+| Method | Path                                          | Auth | Role        | Description                                                  |
+|--------|-----------------------------------------------|------|-------------|--------------------------------------------------------------|
+| POST   | `/api/auth/register`                          | –    | –           | Create account + return JWT.                                 |
+| POST   | `/api/auth/login`                             | –    | –           | Login + return JWT.                                          |
+| GET    | `/api/auth/me`                                | JWT  | any         | Return the current user.                                     |
+| POST   | `/api/vacation-requests`                      | JWT  | Requester   | Submit a request.                                            |
+| GET    | `/api/vacation-requests/me`                   | JWT  | Requester   | List the caller's own requests.                              |
+| GET    | `/api/vacation-requests`                      | JWT  | Validator   | Paginated list with filters (excludes `Cancelled` by default).|
+| GET    | `/api/vacation-requests/stats`                | JWT  | Validator   | Counts grouped by status (Pending/Approved/Rejected only).   |
+| GET    | `/api/vacation-requests/:id`                  | JWT  | any         | Read one request (Requester: own only; Validator: any).      |
+| PATCH  | `/api/vacation-requests/:id`                  | JWT  | Requester   | Edit own request (Pending only). Body: `{startDate?, endDate?, reason?}`. |
+| POST   | `/api/vacation-requests/:id/cancel`           | JWT  | Requester   | Cancel own request (Pending only) — transitions to `Cancelled`. |
+| POST   | `/api/vacation-requests/:id/approve`          | JWT  | Validator   | Approve a Pending request.                                   |
+| POST   | `/api/vacation-requests/:id/reject`           | JWT  | Validator   | Reject a Pending request.                                    |
 
-Sample requests/responses:
+Sample requests:
 
 ```bash
 # Login
 curl -X POST http://127.0.0.1:3000/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"email":"alice@example.com","password":"Requester123!"}'
+  -d '{"email":"alice@example.com","password":"Demo123!"}'
 
 # Submit a request (use the token from the login response)
 curl -X POST http://127.0.0.1:3000/api/vacation-requests \
@@ -121,8 +137,12 @@ curl -X POST http://127.0.0.1:3000/api/vacation-requests \
 Two tables, native Postgres enums, UUID primary keys, explicit constraints and indexes.
 
 - `users(id, name, email UNIQUE, password_hash, role enum('Requester','Validator'), created_at, updated_at)`
-- `vacation_requests(id, user_id FK→users, start_date, end_date, reason, status enum('Pending','Approved','Rejected') default 'Pending', comments, created_at, updated_at, CHECK end_date >= start_date)`
+- `vacation_requests(id, user_id FK→users, start_date, end_date, reason, status enum('Pending','Approved','Rejected','Cancelled') default 'Pending', comments, created_at, updated_at, CHECK end_date >= start_date)`
 - Indexes: `(user_id, status)` for overlap detection and "my requests"; `(status, created_at DESC)` for the validator's default sort.
+
+Migrations:
+- `Init1715500000000` — creates the two tables, both enums, all constraints and indexes.
+- `AddCancelledStatus1715600000000` — extends the `vacation_status` enum with `'Cancelled'` (non-transactional migration, required by Postgres for `ALTER TYPE ADD VALUE`).
 
 ## Testing
 
@@ -130,10 +150,10 @@ The backend has comprehensive integration tests against a real test Postgres dat
 
 ```bash
 docker compose -f docker-compose.test.yml up -d
-npm test --workspace=@vacation/api
+npm run test:api
 ```
 
-**41 tests across 5 suites** cover auth flows, requester-side overlap and validation, validator-side filters and pagination, stats, approve/reject transitions, and pure Zod schema unit tests.
+**56 tests across 5 suites** cover auth flows, requester-side create/overlap/edit/cancel, validator-side filters/pagination/stats, approve/reject transitions, the `Cancelled` status handling (default exclusion + explicit filter + stats exclusion), and pure Zod schema unit tests.
 
 Coverage: ≥95% on the service layer.
 
@@ -164,15 +184,14 @@ Aura's accessibility scaffolding while replacing its visual language.
 ## Known limitations
 
 - No password reset, email verification, or refresh tokens (24h JWT, then re-login).
-- No request edit or withdraw flow.
-- No notifications (email or in-app).
+- No notifications (email or in-app) when a decision is made.
 - Frontend tests deliberately out of scope.
 - Pagination is server-side but rows are not virtualised; fine up to a few thousand rows.
+- The validator's default list excludes `Cancelled`; they can opt in via the status filter.
 
 ## Future enhancements
 
 - Audit trail (`decided_by`, `decided_at`) surfaced to requesters.
-- Withdraw flow for Pending requests.
-- Calendar view of approved vacations.
+- Calendar view of approved vacations across the team.
 - Email notifications on decision.
 - Multi-tenant org partitioning.
