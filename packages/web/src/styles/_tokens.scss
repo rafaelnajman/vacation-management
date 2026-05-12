@@ -11,19 +11,19 @@
   --ink-muted:         #9CA3AD;
   --ink-on-inverse:    #F5F2EB;  // text on dark panels
 
-  // Accent — glacial blue (clear alpine sky, vintage ski-resort branding, Swiss railway signage)
+  // Accent — deep blue, the single dominant color in the UI
   --accent:            #1E5B8C;
   --accent-hover:      #16487A;
   --accent-soft:       #E0EBF4;  // tinted background
 
-  // Secondary accent — alpine pine (used for approved status and secondary CTAs)
+  // Secondary accent — forest green (used for approved status and secondary CTAs)
   --secondary:         #0B5E5B;
   --secondary-soft:    #DDEAE6;
 
   // Status — vintage poster palette, not stock alert palette
   --status-pending:    #C39448;  // ochre
   --status-pending-bg: #F4E9D2;
-  --status-approved:   #0B5E5B;  // alpine pine
+  --status-approved:   #0B5E5B;  // forest green
   --status-approved-bg:#DDEAE6;
   --status-rejected:   #A8123D;  // vintage poster red
   --status-rejected-bg:#F4DCE2;
